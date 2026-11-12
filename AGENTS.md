@@ -44,6 +44,7 @@ cortefacil/
   launcher.py     abre o servidor e o navegador (sem console quando --background)
   app.py          FastAPI: upload, projetos (em ../projetos/<id>/), render, IA, setup
   engine.py       análise (probe, proxy, Whisper, silêncios) → linha do tempo → render ffmpeg
+  captions.py     desenho das legendas, títulos e frases de destaque com animações (quadros em paralelo)
   nlp.py          heurísticas PT-BR: palavras-chave, emojis, vícios
   llm.py          "Turbinar com IA": chama `claude -p` ou `codex exec` (conta do usuário, sem API key)
   setup_check.py  onboarding: checa ffmpeg, baixa o modelo Whisper e mostra o progresso
@@ -55,7 +56,9 @@ cortefacil/
 Pontos centrais do motor:
 - **Edição pelo texto**: cada palavra tem `s`/`e` (tempo) e as flags `kw`, `removed`, `filler` e `emoji`. Os trechos mantidos (`build_segments`) saem das palavras ativas, com a pausa máxima dada pelo ritmo. Depois os silêncios do `silencedetect` são subtraídos, porque o Whisper estica palavras.
 - **Prévia = render**: a UI toca o proxy pulando os cortes e desenha a legenda em DOM. O render desenha os mesmos "estados" com o Pillow e os monta com o concat demuxer, como um overlay sobre os segmentos (`trim` + `crop/scale` com zoom) concatenados.
-- **Faixa do topo**: o gancho (`settings.title`) e os tópicos (`settings.topics = [{word_id, text}]`) também são renderizados via concat.
+- **Faixa do topo e destaques**: gancho (`settings.title`), tópicos (`settings.topics = [{word_id, text}]`) e frases de destaque (`settings.callouts = [{start_id, end_id, text}]`) viram streams concat próprios. Durante uma frase de destaque a legenda some (como na referência).
+- **Estilo efetivo** = preset (`styles.STYLES`) + `settings.custom` (fonte, cores, contorno, palavras por vez, animação…) via `styles.resolve_style`; a UI replica isso em `RS()`/`RT()` para a prévia ficar idêntica ao render.
+- **Animações**: entrada da legenda (pop/subir/aparecer), soco da palavra falada, emoji elástico, título descendo; quadros só nas janelas de transição. Aproximação lenta via `zoompan` (`push_in`).
 - **Encoder**: `h264_videotoolbox` no macOS; `libx264` nos outros sistemas.
 
 ## Convenções

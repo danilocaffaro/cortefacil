@@ -137,6 +137,10 @@ def build_prompt(words: list[dict], tasks: set[str]) -> str:
         want.append('"topics": [{"id": id, "title": "..."}] — início de cada tópico/seção quando o vídeo '
                     'tem estrutura (listas, passos, dicas). Título curto (até 6 palavras) e pode terminar '
                     'com 1 emoji. Lista vazia se não houver seções claras.')
+    if "callouts" in tasks:
+        want.append('"callouts": [{"start": id, "end": id, "text": "..."}] — 1 frase de destaque a cada 20-30 s: '
+                    'o trecho mais forte (opinião, número, punchline), reescrito em até 7 palavras, '
+                    'pode ter 1 emoji. start/end = ids do trecho falado correspondente.')
     if "hooks" in tasks:
         want.append('"hooks": ["...", "...", "..."] — 3 opções de título-gancho para o topo do vídeo, '
                     'até 8 palavras, que gerem curiosidade.')
@@ -190,6 +194,14 @@ def enhance(project: dict, tasks: set[str], provider: str) -> dict:
                 topics.append({"word_id": int(t["id"]), "text": str(t["title"]).strip()[:60]})
         project["settings"]["topics"] = topics
         summary["topics"] = len(topics)
+    if "callouts" in tasks and isinstance(data.get("callouts"), list):
+        cs = []
+        for c in data["callouts"]:
+            if isinstance(c, dict) and c.get("text") and str(c.get("start", "")).isdigit() and int(c["start"]) in by_id:
+                end = int(c["end"]) if str(c.get("end", "")).isdigit() and int(c["end"]) in by_id else int(c["start"])
+                cs.append({"start_id": int(c["start"]), "end_id": max(end, int(c["start"])), "text": str(c["text"]).strip()[:70]})
+        project["settings"]["callouts"] = cs
+        summary["callouts"] = len(cs)
     if "hooks" in tasks and isinstance(data.get("hooks"), list):
         hooks = [str(h).strip()[:90] for h in data["hooks"] if str(h).strip()][:3]
         summary["hooks"] = hooks

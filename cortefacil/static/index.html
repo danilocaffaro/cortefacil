@@ -12,6 +12,14 @@
 @font-face{font-family:Montserrat;font-weight:800;src:url(/fonts/Montserrat-ExtraBold.ttf)}
 @font-face{font-family:Montserrat;font-weight:900;src:url(/fonts/Montserrat-Black.ttf)}
 @font-face{font-family:Anton;font-weight:400;src:url(/fonts/Anton-Regular.ttf)}
+@font-face{font-family:Poppins;font-weight:500;src:url(/fonts/Poppins-Medium.ttf)}
+@font-face{font-family:Poppins;font-weight:600;src:url(/fonts/Poppins-SemiBold.ttf)}
+@font-face{font-family:Poppins;font-weight:700;src:url(/fonts/Poppins-Bold.ttf)}
+@font-face{font-family:Poppins;font-weight:800;src:url(/fonts/Poppins-ExtraBold.ttf)}
+@font-face{font-family:"Bebas Neue";font-weight:400;src:url(/fonts/BebasNeue-Regular.ttf)}
+@font-face{font-family:"Archivo Black";font-weight:400;src:url(/fonts/ArchivoBlack-Regular.ttf)}
+@font-face{font-family:"Lilita One";font-weight:400;src:url(/fonts/LilitaOne-Regular.ttf)}
+@font-face{font-family:"DM Serif Display";font-weight:400;src:url(/fonts/DMSerifDisplay-Regular.ttf)}
 /* Tokens: Apple DESIGN.md (VoltAgent/awesome-design-md, MIT) — claro por padrão, escuro opcional */
 :root{
   color-scheme:light;
@@ -127,7 +135,7 @@ header .title{flex:1;text-align:center;color:var(--label2);font-weight:400;overf
 .frame{position:relative;background:#000;border-radius:var(--r-l);overflow:hidden;box-shadow:var(--product-shadow);
   height:min(calc(100vh - 210px),900px);max-width:100%}
 .frame canvas.bg{position:absolute;inset:0;width:100%;height:100%;filter:blur(18px) brightness(.85);transform:scale(1.1)}
-.frame video{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 38%;transition:transform .06s}
+.frame video{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 40%}
 .frame.fit-blur video{object-fit:contain}
 .cap{position:absolute;left:0;right:0;text-align:center;pointer-events:none;line-height:1.22;padding:0 7%;text-wrap:balance}
 .cap .w{display:inline-block;margin:0 .13em;transition:transform .07s}
@@ -135,6 +143,30 @@ header .title{flex:1;text-align:center;color:var(--label2);font-weight:400;overf
 @keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
 .ttl{position:absolute;left:0;right:0;text-align:center;color:#fff;font-family:Montserrat;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,.75);padding:0 8%;pointer-events:none;transition:opacity .25s}
 .pbar{position:absolute;left:0;bottom:0;height:5px}
+.cap>div,.ttl,.call{pointer-events:auto;cursor:grab;touch-action:none}
+.cap>div:hover,.ttl:hover,.call:hover{outline:1px dashed rgba(255,255,255,.55);outline-offset:4px;border-radius:6px}
+.dragging,.dragging *{cursor:grabbing!important}
+.call{position:absolute;left:0;right:0;text-align:center;color:#fff;padding:0 9%;transition:opacity .22s;line-height:1.25}
+.ttl span.bx,.call span.bx{display:inline;padding:.12em .45em;border-radius:.35em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+@keyframes a-pop{0%{transform:scale(.8);opacity:0}35%{opacity:1}70%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes a-slide{from{transform:translateY(.55em);opacity:0}to{transform:none;opacity:1}}
+@keyframes a-fade{from{opacity:0}to{opacity:1}}
+@keyframes a-punch{from{transform:scale(1.1)}to{transform:scale(1)}}
+@keyframes a-drop{from{transform:translateY(-.5em);opacity:0}to{transform:none;opacity:1}}
+.an-pop{animation:a-pop .24s cubic-bezier(.34,1.56,.64,1)} .an-slide{animation:a-slide .24s cubic-bezier(.22,1,.36,1)} .an-fade{animation:a-fade .24s ease-out}
+.punch{animation:a-punch .18s cubic-bezier(.22,1,.36,1)} .drop-in{animation:a-drop .32s cubic-bezier(.22,1,.36,1)}
+.safe{position:absolute;inset:0;pointer-events:none;z-index:5}
+.safe i{position:absolute;background:rgba(255,59,48,.18);border:1px dashed rgba(255,59,48,.7);font:600 10px var(--font);color:#fff;font-style:normal;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;text-shadow:0 1px 2px #000}
+.color-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 12px}
+.color-row label{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;color:var(--label2);text-align:center;cursor:pointer}
+.color-row input{-webkit-appearance:none;appearance:none;width:30px;height:30px;border:0;border-radius:50%;padding:0;background:none;cursor:pointer;box-shadow:0 0 0 1px var(--hair)}
+.color-row input::-webkit-color-swatch-wrapper{padding:0}.color-row input::-webkit-color-swatch{border:0;border-radius:50%}
+select.field{-webkit-appearance:none;appearance:none;padding-right:30px;background-image:linear-gradient(45deg,transparent 50%,var(--label2) 50%),linear-gradient(135deg,var(--label2) 50%,transparent 50%);background-position:calc(100% - 16px) 15px,calc(100% - 11px) 15px;background-size:5px 5px;background-repeat:no-repeat}
+.row select.field{width:62%;height:32px}
+.linkbtn{color:var(--link);font-size:13px;padding:6px 2px}
+.callout-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(0,113,227,.12);color:var(--link);border-radius:var(--r-pill);padding:1px 4px 1px 9px;font-size:12px;font-weight:600;margin-right:4px;cursor:pointer}
+.callout-chip button{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:var(--fill2)} .callout-chip .i{width:11px;height:11px} .callout-chip button .i{width:8px;height:8px}
+.wd.co{text-decoration:underline;text-decoration-color:var(--link);text-underline-offset:3px}
 .bigplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:68px;height:68px;border-radius:50%;
   background:var(--chip);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);color:#1d1d1f}
 .transport{display:flex;align-items:center;gap:12px;width:min(560px,100%)}
@@ -304,6 +336,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
       <video id="vid" playsinline preload="auto"></video>
       <div class="ttl" id="ttl"></div>
       <div class="cap" id="cap"></div>
+      <div class="call" id="call"></div>
+      <div class="safe hidden" id="safe"><i style="left:0;right:0;top:0;height:9%">Topo do app</i><i style="right:0;width:14%;top:52%;height:30%">Botões</i><i style="left:0;right:0;bottom:0;height:18%">Legenda do post</i></div>
       <div class="pbar" id="pbar"></div>
       <button class="bigplay" id="bigplay" aria-label="Reproduzir"><svg class="i lg" aria-hidden="true"><use href="#i-play_fill"/></svg></button>
     </div>
@@ -321,13 +355,32 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
     <div class="pane" data-p="style">
       <div class="sec">Legenda</div>
       <div class="styles" id="styles"></div>
-      <div class="sec">Cor de destaque</div>
+      <div class="sec">Cor de destaque rápida</div>
       <div class="swatches" id="swatches"></div>
-      <div class="sec">Tamanho e posição</div>
+      <div class="sec" style="display:flex;justify-content:space-between;align-items:center">Personalizar legenda <button class="linkbtn" id="resetStyle">Restaurar</button></div>
       <div class="rows">
-        <div class="row"><span class="t" style="width:70px">Tamanho</span><input type="range" id="capScale" min="0.6" max="1.5" step="0.05"></div>
-        <div class="row"><span class="t" style="width:70px">Altura</span><input type="range" id="capY" min="0.15" max="0.88" step="0.01"></div>
+        <div class="row"><span class="t">Fonte</span><select class="field" id="cFont"></select></div>
+        <div class="row"><span class="t">Fonte das palavras‑chave</span><select class="field" id="cKwFont"></select></div>
+        <div class="color-row">
+          <label><input type="color" data-c="text">Texto</label>
+          <label><input type="color" data-c="active">Palavra falada</label>
+          <label><input type="color" data-c="kw">Palavra‑chave</label>
+          <label><input type="color" data-c="box">Fundo do destaque</label>
+        </div>
+        <div class="row"><span class="t" style="width:90px">Contorno</span><input type="range" id="cStroke" min="0" max="16" step="1"></div>
+        <div class="row"><span class="t" style="width:90px">Tamanho</span><input type="range" id="capScale" min="0.6" max="1.6" step="0.05"></div>
+        <div class="row"><span class="t" style="width:90px">Altura</span><input type="range" id="capY" min="0.12" max="0.9" step="0.01"></div>
+        <div class="row"><span class="t">Maiúsculas</span><label class="sw"><input type="checkbox" id="cUpper"><i></i></label></div>
+        <div class="row"><span class="t">Sombra</span><label class="sw"><input type="checkbox" id="cShadow"><i></i></label></div>
       </div>
+      <div class="sec">Palavras por vez</div>
+      <div class="seg" id="cWords"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="6">6</button></div>
+      <div class="sec">Animação</div>
+      <div class="seg" id="cAnim"></div>
+      <div class="sec">Modo do destaque</div>
+      <div class="seg" id="cMode"><button data-v="color">Cor</button><button data-v="box">Caixa</button><button data-v="none">Sem destaque</button></div>
+      <p class="d" style="font-size:12px;color:var(--label2);margin:12px 4px 0">Dica: arraste a legenda, o título e as frases de destaque direto no vídeo.</p>
+      <button class="pill ghost" id="saveStyle" style="width:100%;margin-top:12px;height:36px">Salvar como meu estilo</button>
       <div class="sec">Extras</div>
       <div class="rows">
         <div class="row"><div><div class="t">Emojis automáticos</div><div class="d">Aparecem junto das palavras‑chave</div></div><label class="sw"><input type="checkbox" data-set="emojis"><i></i></label></div>
@@ -336,10 +389,18 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
       <div class="sec">Título de abertura (gancho)</div>
       <input class="field" type="text" id="title" placeholder="Ex.: 3 erros que te deixam pobre 💸" maxlength="90">
       <div class="seg" id="titleSecs" style="margin-top:8px"><button data-v="3">3 s</button><button data-v="5">5 s</button><button data-v="999">Vídeo todo</button></div>
+      <div class="sec">Aparência do título, tópicos e destaques</div>
+      <div class="rows">
+        <div class="row"><span class="t">Fonte</span><select class="field" id="tFont"></select></div>
+        <div class="row"><span class="t">Cor</span><input type="color" id="tColor" style="width:30px;height:30px;border:0;border-radius:50%;padding:0;background:none"></div>
+        <div class="row"><span class="t">Fundo</span><div class="seg" id="tBg" style="width:62%"><button data-v="none">Sem fundo</button><button data-v="box">Caixa</button></div></div>
+        <div class="row"><span class="t" style="width:90px">Tamanho</span><input type="range" id="tScale" min="0.5" max="1.6" step="0.02"></div>
+        <div class="row"><span class="t" style="width:90px">Altura</span><input type="range" id="tY" min="0.05" max="0.45" step="0.01"></div>
+      </div>
     </div>
 
     <div class="pane hidden" data-p="text">
-      <div class="hint">Clique numa palavra para <b>ir até ela</b>. Arraste ou use <b>Shift+clique</b> para selecionar um trecho e <b>destacar</b>, <b>cortar</b>, <b>editar</b> ou marcar um <b>tópico</b>. Cortar o texto corta o vídeo.</div>
+      <div class="hint">Clique numa palavra para <b>ir até ela</b>. Arraste ou use <b>Shift+clique</b> para selecionar um trecho e <b>destacar</b>, <b>cortar</b>, <b>editar</b> ou marcar um <b>tópico</b> ou uma <b>frase de destaque</b>. Cortar o texto corta o vídeo.</div>
       <div class="legend"><span><i style="background:var(--yellow)"></i>Destaque</span><span><i style="background:var(--danger)"></i>Cortado</span><span><i style="background:var(--label3)"></i>Vício (“éé”)</span><span><i style="background:var(--purple)"></i>Tópico</span></div>
       <div class="script" id="script"></div>
     </div>
@@ -351,11 +412,14 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
       <div class="seg" id="fit"><button data-v="crop">Preencher</button><button data-v="blur">Fundo desfocado</button></div>
       <div class="sec">Ritmo dos cortes</div>
       <div class="seg" id="pace"><button data-v="suave">Suave</button><button data-v="normal">Normal</button><button data-v="acelerado">Acelerado</button></div>
+      <div class="sec">Zoom dinâmico</div>
+      <div class="seg" id="zoomMode"><button data-v="cuts">A cada corte</button><button data-v="topics">A cada tópico</button><button data-v="off">Desligado</button></div>
       <div class="sec">Edição automática</div>
       <div class="rows">
         <div class="row"><div><div class="t">Cortar silêncios</div><div class="d">Remove pausas e respiros longos</div></div><label class="sw"><input type="checkbox" data-set="cut_silence"><i></i></label></div>
         <div class="row"><div><div class="t">Remover vícios</div><div class="d">“éé”, “ahn”, “hum”…</div></div><label class="sw"><input type="checkbox" data-set="remove_fillers"><i></i></label></div>
-        <div class="row"><div><div class="t">Zoom dinâmico</div><div class="d">Alterna o enquadramento a cada corte</div></div><label class="sw"><input type="checkbox" data-set="zoom"><i></i></label></div>
+        <div class="row"><div><div class="t">Aproximação lenta</div><div class="d">Câmera avança devagar em cada trecho</div></div><label class="sw"><input type="checkbox" data-set="push_in"><i></i></label></div>
+        <div class="row"><div><div class="t">Mostrar áreas do Instagram</div><div class="d">Onde a interface do app cobre o vídeo</div></div><label class="sw"><input type="checkbox" data-set="safe_guides"><i></i></label></div>
         <div class="row"><div><div class="t">Barra de progresso</div><div class="d">Ajuda a segurar a atenção até o fim</div></div><label class="sw"><input type="checkbox" data-set="progress_bar"><i></i></label></div>
         <div class="row"><div><div class="t">Realçar imagem</div><div class="d">Cor mais viva e nitidez</div></div><label class="sw"><input type="checkbox" data-set="enhance"><i></i></label></div>
       </div>
@@ -370,7 +434,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
 </section>
 
 <div class="popover hidden" id="popover">
-  <button data-a="kw">Destacar</button><button data-a="cut">Cortar</button><button data-a="edit">Editar</button><button data-a="emoji">Emoji</button><button data-a="topic">Tópico</button>
+  <button data-a="kw">Destacar</button><button data-a="cut">Cortar</button><button data-a="edit">Editar</button><button data-a="emoji">Emoji</button><button data-a="topic">Tópico</button><button data-a="callout">Frase de destaque</button>
 </div>
 
 <!-- sheet: IA -->
@@ -384,6 +448,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
         <div class="row"><div><div class="t">Destaques e emojis</div><div class="d">Escolhe as palavras mais fortes</div></div><label class="sw"><input type="checkbox" data-ai="kw" checked><i></i></label></div>
         <div class="row"><div><div class="t">Cortar repetições e erros</div><div class="d">Frases recomeçadas, gaguejadas, “corta”</div></div><label class="sw"><input type="checkbox" data-ai="cut" checked><i></i></label></div>
         <div class="row"><div><div class="t">Títulos de tópico</div><div class="d">Cabeçalhos no topo a cada assunto</div></div><label class="sw"><input type="checkbox" data-ai="topics" checked><i></i></label></div>
+        <div class="row"><div><div class="t">Frases de destaque</div><div class="d">A frase mais forte de cada trecho, em destaque</div></div><label class="sw"><input type="checkbox" data-ai="callouts" checked><i></i></label></div>
         <div class="row"><div><div class="t">Sugerir ganchos</div><div class="d">3 títulos de abertura que prendem</div></div><label class="sw"><input type="checkbox" data-ai="hooks" checked><i></i></label></div>
         <div class="row"><div><div class="t">Corrigir a transcrição</div><div class="d">Nomes e termos técnicos</div></div><label class="sw"><input type="checkbox" data-ai="fix" checked><i></i></label></div>
       </div>
@@ -523,7 +588,19 @@ function openEditor(s){
   buildStyleCards(); buildSwatches(); bindSettings(); renderScript(); applyFrame(); updateStats();
   if (s.render && s.render.state === 'running') exportVideo(true);
 }
-function style(){ return CFG.styles[P.settings.style] || CFG.styles.viral; }
+function RS(S){ S = S || P.settings;
+  const base = {...(CFG.styles[S.style] || CFG.styles.viral)}, c = {};
+  for (const [k,v] of Object.entries(S.custom||{})) if (v !== null && v !== undefined && v !== '') c[k] = v;
+  if (S.accent && !('active' in c) && !('box' in c) && !('kw' in c)) base[{color:'active',box:'box',none:'kw'}[base.active_mode]] = S.accent;
+  const fid = c.font || base.font_id; delete c.font; Object.assign(base, c);
+  const f = CFG.fonts[fid] || CFG.fonts['montserrat-black']; base.font_id = fid; base.css_font = `'${f.css}'`; base.css_weight = f.weight;
+  const kf = CFG.fonts[base.kw_font]; base.kw_css_font = kf ? `'${kf.css}'` : base.css_font; base.kw_css_weight = kf ? kf.weight : base.css_weight;
+  base.box = base.box || '#7B2FF7'; return base; }
+function RT(S){ S = S || P.settings; const st = CFG.styles[S.style] || {};
+  const b = {font:'montserrat-bold', scale:1, y:null, color:'#FFFFFF', bg:'none', ...(st.title||{})};
+  for (const k of ['font','scale','y','color','bg']) if (S['title_'+k] !== null && S['title_'+k] !== undefined) b[k] = S['title_'+k];
+  const f = CFG.fonts[b.font] || CFG.fonts['montserrat-bold']; b.css = `'${f.css}'`; b.weight = f.weight; return b; }
+function style(){ return RS(); }
 function sampleHTML(st){
   return ['VOCÊ','SABIA','DISSO?'].map((w,i)=>{
     const t = st.upper ? w : w.charAt(0)+w.slice(1).toLowerCase();
@@ -534,15 +611,25 @@ function sampleHTML(st){
   }).join(' ');
 }
 function buildStyleCards(){
+  const mine = myStyles(), noCustom = !Object.keys(P.settings.custom||{}).length;
   $('#styles').innerHTML = Object.entries(CFG.styles).map(([id, st]) =>
-    `<button class="sty ${P.settings.style===id?'on':''}" data-id="${id}"><div class="pv">${sampleHTML(st)}</div><div class="nm">${st.name}<small>${st.desc}</small></div></button>`).join('');
-  $$('.sty').forEach(b => b.onclick = () => { set({style: b.dataset.id, caption_y: null}); buildStyleCards(); syncControls(); });
+    `<button class="sty ${P.settings.style===id && noCustom?'on':''}" data-id="${id}"><div class="pv">${sampleHTML(RS({style:id}))}</div><div class="nm">${st.name}<small>${st.desc}</small></div></button>`).join('')
+    + mine.map((m, i) => `<button class="sty" data-mine="${i}"><div class="pv">${sampleHTML(RS(m.s))}</div><div class="nm">${esc(m.name)}<small>Meu estilo · <span data-delmine="${i}" style="color:var(--danger)">apagar</span></small></div></button>`).join('');
+  $$('.sty[data-id]').forEach(b => b.onclick = () => { set({style: b.dataset.id, caption_y: null, custom: {}, title_font: null, title_scale: null, title_y: null, title_color: null, title_bg: null, accent: null}); buildStyleCards(); buildSwatches(); syncControls(); });
+  $$('.sty[data-mine]').forEach(b => b.onclick = e => { const i = +b.dataset.mine;
+    if (e.target.dataset.delmine !== undefined){ const l = myStyles(); l.splice(i,1); saveMyStyles(l); buildStyleCards(); return; }
+    set(JSON.parse(JSON.stringify(myStyles()[i].s))); buildStyleCards(); buildSwatches(); syncControls(); toast('Estilo aplicado'); });
 }
 const SWATCHES = [null,'#FFD60A','#30D158','#64D2FF','#0A84FF','#BF5AF2','#FF375F','#FF453A','#FF9F0A','#FFFFFF'];
 function buildSwatches(){
   $('#swatches').innerHTML = SWATCHES.map(c => `<button class="swc ${c?'':'auto'} ${(P.settings.accent||null)===c?'on':''}" data-c="${c||''}" title="${c||'Cor do estilo'}" style="${c?'background:'+c:''}"></button>`).join('');
   $$('.swc').forEach(b => b.onclick = () => { set({accent: b.dataset.c || null}); buildSwatches(); });
 }
+const STYLE_KEYS = ['style','custom','accent','caption_scale','caption_y','title_font','title_scale','title_y','title_color','title_bg','emojis','zoom_mode','callout_y'];
+function myStyles(){ try { return JSON.parse(localStorage.getItem('cf_my_styles')||'[]'); } catch(e){ return []; } }
+function saveMyStyles(l){ try { localStorage.setItem('cf_my_styles', JSON.stringify(l)); } catch(e){} }
+function setCustom(obj, delay=0){ P.settings.custom = {...(P.settings.custom||{}), ...obj}; set({custom: P.settings.custom}, delay); buildStyleCards(); }
+function fontOptions(sel, withSame){ sel.innerHTML = (withSame?'<option value="">Mesma da legenda</option>':'') + Object.entries(CFG.fonts).map(([k,f]) => `<option value="${k}">${f.label}</option>`).join(''); }
 function segBind(id, key, conv=(v=>v)){ $('#'+id).querySelectorAll('button').forEach(b => b.onclick = () => { set({[key]: conv(b.dataset.v)}); syncControls(); }); }
 let bound = false;
 function bindSettings(){
@@ -557,6 +644,28 @@ function bindSettings(){
       const fd = new FormData(); fd.append('file', f);
       try { const j = await api(`/api/jobs/${JOB}/music`, {method:'POST', body: fd}); P.settings.music = j.music; P.musicLabel = j.label; syncControls(); toast('Música adicionada'); } catch(err){ toast(err.message); } };
     $('#musicDel').onclick = () => { set({music: null}); syncControls(); };
+    fontOptions($('#cFont')); fontOptions($('#cKwFont'), true); fontOptions($('#tFont'));
+    $('#cAnim').innerHTML = Object.entries(CFG.anims).map(([k,v]) => `<button data-v="${k}">${v}</button>`).join('');
+    $('#cFont').onchange = e => setCustom({font: e.target.value});
+    $('#cKwFont').onchange = e => setCustom({kw_font: e.target.value || null});
+    $$('.color-row input').forEach(i => i.oninput = () => setCustom({[i.dataset.c]: i.value.toUpperCase()}, 300));
+    $('#cStroke').oninput = e => setCustom({stroke: +e.target.value}, 300);
+    $('#cUpper').onchange = e => setCustom({upper: e.target.checked});
+    $('#cShadow').onchange = e => setCustom({shadow: e.target.checked});
+    $('#cWords').querySelectorAll('button').forEach(b => b.onclick = () => { setCustom({max_words: +b.dataset.v}); syncControls(); });
+    $('#cAnim').querySelectorAll('button').forEach(b => b.onclick = () => { setCustom({anim: b.dataset.v}); syncControls(); });
+    $('#cMode').querySelectorAll('button').forEach(b => b.onclick = () => { setCustom({active_mode: b.dataset.v}); syncControls(); });
+    $('#resetStyle').onclick = () => { set({custom: {}, accent: null, caption_scale: 1, caption_y: null, title_font: null, title_scale: null, title_y: null, title_color: null, title_bg: null}); buildStyleCards(); buildSwatches(); syncControls(); toast('Estilo restaurado'); };
+    $('#saveStyle').onclick = () => { const name = prompt('Nome do seu estilo:', 'Meu estilo'); if (!name) return;
+      const snap = {}; STYLE_KEYS.forEach(k => snap[k] = JSON.parse(JSON.stringify(P.settings[k] ?? null)));
+      const l = myStyles(); l.push({name: name.trim().slice(0,30), s: snap}); saveMyStyles(l); buildStyleCards(); toast('Estilo salvo para os próximos vídeos'); };
+    $('#tFont').onchange = e => set({title_font: e.target.value});
+    $('#tColor').oninput = e => set({title_color: e.target.value.toUpperCase()}, 300);
+    $('#tBg').querySelectorAll('button').forEach(b => b.onclick = () => { set({title_bg: b.dataset.v}); syncControls(); });
+    $('#tScale').oninput = e => set({title_scale: +e.target.value}, 400);
+    $('#tY').oninput = e => set({title_y: +e.target.value}, 400);
+    $('#zoomMode').querySelectorAll('button').forEach(b => b.onclick = () => { set(b.dataset.v === 'off' ? {zoom: false} : {zoom: true, zoom_mode: b.dataset.v}, 50); syncControls(); });
+    bindDrag();
   }
   syncControls();
 }
@@ -565,7 +674,16 @@ function syncControls(){
   for (const [id,key] of [['format','format'],['fit','fit'],['pace','pace'],['titleSecs','title_secs']])
     $('#'+id).querySelectorAll('button').forEach(b => b.classList.toggle('on', String(S[key]) === b.dataset.v));
   $$('[data-set]').forEach(i => i.checked = !!S[i.dataset.set]);
-  $('#capScale').value = S.caption_scale || 1; $('#capY').value = S.caption_y ?? style().y;
+  const rs = RS(), rt = RT();
+  $('#capScale').value = S.caption_scale || 1; $('#capY').value = S.caption_y ?? rs.y;
+  $('#cFont').value = rs.font_id; $('#cKwFont').value = (S.custom||{}).kw_font || (CFG.styles[S.style]||{}).kw_font || '';
+  $$('.color-row input').forEach(i => i.value = (rs[i.dataset.c] || '#FFFFFF').slice(0,7));
+  $('#cStroke').value = rs.stroke || 0; $('#cUpper').checked = !!rs.upper; $('#cShadow').checked = rs.shadow !== false;
+  for (const [id,v] of [['cWords', String(rs.max_words)], ['cAnim', rs.anim || 'pop'], ['cMode', rs.active_mode], ['tBg', rt.bg || 'none'],
+                        ['zoomMode', S.zoom === false ? 'off' : (S.zoom_mode || (CFG.styles[S.style]||{}).zoom_mode || 'cuts')]])
+    $('#'+id).querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  $('#tFont').value = rt.font; $('#tColor').value = (rt.color||'#FFFFFF').slice(0,7); $('#tScale').value = rt.scale || 1;
+  $('#tY').value = rt.y ?? (CFG.formats[S.format][1] > CFG.formats[S.format][0] ? 0.13 : 0.09);
   if (document.activeElement !== $('#title')) $('#title').value = S.title || '';
   $('#musicVol').value = S.music_volume || 0.12;
   $('#musicName').textContent = S.music ? (P.musicLabel || 'Música adicionada') : 'Nenhuma';
@@ -630,52 +748,83 @@ function drawOverlay(){
   const [W,H] = CFG.formats[S.format] || [1080,1920];
   const k = fr.clientHeight / H, unit = Math.min(W,H)/1080;
   const t = vid.currentTime, i = segAt(t);
-  vid.style.transform = `scale(${i >= 0 ? L.segments[i][2] : 1})`;
+  { const sg = L.segments[i]; const z = sg ? sg[2] * (1 + (sg[3]||0) * Math.max(0, Math.min(1, (t - sg[0]) / (sg[1] - sg[0])))) : 1; vid.style.transform = `scale(${z.toFixed(4)})`; }
   if (S.fit === 'blur' && vid.readyState >= 2) { try { bgx.drawImage(vid, 0, 0, bgc.width, bgc.height); } catch(e){} }
   const out = srcToOut(t);
   $('#tm').textContent = `${fmt(out)} / ${fmt(L.duration_out)}`;
   if (document.activeElement !== $('#scrub')) { $('#scrub').value = L.duration_out ? out / L.duration_out * 1000 : 0; rangeFill($('#scrub')); }
   const pb = $('#pbar'); pb.style.display = S.progress_bar ? '' : 'none';
   pb.style.width = (L.duration_out ? out / L.duration_out * 100 : 0) + '%'; pb.style.height = Math.max(3, H/160*k) + 'px';
-  let pc = S.accent || st.active; if (pc.toUpperCase()==='#FFFFFF') pc = '#FFE600'; pb.style.background = pc;
-  // faixa do topo (gancho + tópicos)
-  const ttl = $('#ttl'), top = (L.top||[]).find(([a,b]) => out >= a && out < b);
-  if (top){ ttl.style.opacity = 1; if (ttl.textContent !== top[2]) ttl.textContent = top[2];
-    ttl.style.fontSize = (66*unit*k) + 'px'; ttl.style.top = (H*(H>W?0.11:0.06)*k) + 'px'; } else ttl.style.opacity = 0;
+  let pc = st.active_mode==='box' ? st.box : st.active_mode==='none' ? st.kw : st.active; if ((pc||'').toUpperCase()==='#FFFFFF') pc = '#FFE600'; pb.style.background = pc;
+  $('#safe').classList.toggle('hidden', !S.safe_guides);
+  // faixa do topo (gancho + tópicos) e frases de destaque
+  const rt = RT();
+  const tsize = (H > W ? 66 : 58) * unit * (rt.scale || 1) * k;
+  placeText($('#ttl'), (L.top||[]).find(([a,b]) => out >= a && out < b), rt, tsize, (rt.y ?? (H > W ? 0.13 : 0.09)) * fr.clientHeight);
+  const callNow = (L.callouts||[]).find(([a,b]) => out >= a && out < b);
+  placeText($('#call'), callNow, rt, tsize * 0.92, (S.callout_y ?? 0.78) * fr.clientHeight);
   // legenda
   const cap = $('#cap');
-  if (!S.captions) { cap.innerHTML=''; lastCapKey=''; return; }
+  if (!S.captions || callNow) { cap.innerHTML=''; lastCapKey=''; lastPage=-1; return; }
   let page = null, pi = -1;
   for (let j=0;j<L.pages.length;j++){
     const ws = L.pages[j].map(id => WMAP[id]); const nx = L.pages[j+1] ? WMAP[L.pages[j+1][0]].s : 1e9;
     if (t >= ws[0].s - 0.02 && t < Math.min(nx, ws.at(-1).e + 0.6)) { page = ws; pi = j; break; }
   }
-  if (!page) { cap.innerHTML=''; lastCapKey=''; return; }
+  if (!page) { cap.innerHTML=''; lastCapKey=''; lastPage=-1; return; }
   let act = -1; page.forEach((w,j) => { if (t >= w.s - 0.02) act = j; });
-  const popOn = st.pop && act >= 0 && t - page[act].s < 0.09;
   const base = st.size * unit * (S.caption_scale||1) * k;
-  const key = [pi, act, popOn, base.toFixed(1), S.style, S.accent, S.emojis, S.caption_y, page.map(w=>w.text+w.kw+w.emoji).join()].join('|');
+  const key = [pi, act, base.toFixed(1), JSON.stringify(st), S.emojis, S.caption_y, page.map(w=>w.text+w.kw+w.emoji).join()].join('|');
   if (key === lastCapKey) return; lastCapKey = key;
-  const accentC = S.accent && st.active_mode==='color' ? S.accent : st.active;
-  const boxC = S.accent && st.active_mode==='box' ? S.accent : (st.box||'#7B2FF7');
-  const kwC = S.accent && st.active_mode==='none' ? S.accent : st.kw;
-  let emo = ''; page.forEach((w,j) => { if (w.kw && w.emoji && (j <= act || !st.pop)) emo = w.emoji; });
+  const anim = st.anim || 'pop', newPage = pi !== lastPage; lastPage = pi;
+  let emo = '', emoIdx = -1; page.forEach((w,j) => { if (w.kw && w.emoji && (j <= act || anim === 'none')) { emo = w.emoji; emoIdx = j; } });
   const html = page.map((w,j) => {
     let c = st.text, extra = '';
-    const sz = base * (w.kw ? st.kw_scale : 1) * (popOn && j===act ? 1.14 : 1);
-    if (w.kw) c = kwC;
+    const sz = base * (w.kw ? st.kw_scale : 1);
+    if (w.kw) c = st.kw;
     const isAct = j === act && st.active_mode !== 'none';
-    if (isAct && st.active_mode==='color' && !w.kw) c = accentC;
-    if (isAct && st.active_mode==='box'){ c='#fff'; extra = `background:${boxC};border-radius:${base*0.18}px;padding:0 ${base*0.16}px;`; }
-    const stroke = st.stroke ? `-webkit-text-stroke:${2*st.stroke*base/st.size}px ${st.stroke_color};paint-order:stroke fill;` : '';
-    return `<span class="w" style="font-size:${sz}px;color:${c};${stroke}${extra}">${esc(st.upper ? w.text.toUpperCase() : w.text)}</span>`;
+    if (isAct && st.active_mode==='color' && !w.kw) c = st.active;
+    if (isAct && st.active_mode==='box'){ c='#fff'; extra = `background:${st.box};border-radius:${base*0.2}px;padding:0 ${base*0.17}px;`; }
+    const stroke = st.stroke ? `-webkit-text-stroke:${2*st.stroke*base/st.size}px ${st.stroke_color||'#000'};paint-order:stroke fill;` : '';
+    const fam = w.kw ? `font-family:${st.kw_css_font};font-weight:${st.kw_css_weight};` : '';
+    const cls = 'w' + (j === act && anim !== 'none' ? ' punch' : '');
+    return `<span class="${cls}" style="font-size:${sz}px;color:${c};${fam}${stroke}${extra}">${esc(st.upper ? w.text.toUpperCase() : w.text)}</span>`;
   }).join('');
   cap.style.fontFamily = st.css_font; cap.style.fontWeight = st.css_weight;
-  cap.style.textShadow = st.shadow ? `0 ${base*0.06}px ${base*0.14}px rgba(0,0,0,.75)` : 'none';
-  cap.innerHTML = (S.emojis && emo ? `<span class="emo" style="font-size:${base*1.3}px">${emo}</span>` : '') + `<div>${html}</div>`;
+  cap.style.textShadow = st.shadow !== false ? `0 ${base*0.06}px ${base*0.16}px rgba(0,0,0,.75)` : 'none';
+  const emoNew = emo && emoIdx === act && anim !== 'none';
+  cap.innerHTML = (S.emojis && emo ? `<span class="emo" style="font-size:${base*1.3}px;${emoNew?'':'animation:none'}">${emo}</span>` : '')
+    + `<div class="${newPage && anim !== 'none' ? 'an-' + anim : ''}">${html}</div>`;
   const cy = (S.caption_y ?? st.y) * fr.clientHeight, textDiv = cap.lastElementChild;
   const emoH = cap.firstElementChild !== textDiv ? cap.firstElementChild.offsetHeight : 0;
   cap.style.top = (cy - emoH - textDiv.offsetHeight/2) + 'px';
+}
+let lastPage = -1;
+function placeText(el, item, rt, size, centerY){
+  if (!item){ if (el.style.opacity !== '0'){ el.style.opacity = 0; el.dataset.t = ''; } return; }
+  const text = item[2];
+  if (el.dataset.t !== text){
+    el.dataset.t = text;
+    el.innerHTML = rt.bg === 'box' ? `<span class="bx" style="background:${(rt.color||'').toUpperCase()==='#FFFFFF' ? 'rgba(0,0,0,.6)' : 'rgba(255,255,255,.94)'}">${esc(text)}</span>` : esc(text);
+    el.classList.remove('drop-in'); void el.offsetWidth; el.classList.add('drop-in');
+  }
+  el.style.opacity = 1; el.style.fontFamily = rt.css; el.style.fontWeight = rt.weight; el.style.color = rt.color || '#fff';
+  el.style.fontSize = size + 'px'; el.style.textShadow = rt.bg === 'box' ? 'none' : '0 2px 8px rgba(0,0,0,.75)';
+  el.style.top = (centerY - el.offsetHeight / 2) + 'px';
+}
+// arrastar legenda / título / destaque direto no vídeo
+function bindDrag(){
+  const fr = $('#frame');
+  const start = (e, key) => {
+    e.preventDefault(); e.stopPropagation(); pause(); document.body.classList.add('dragging');
+    const r = fr.getBoundingClientRect();
+    const move = ev => { const y = Math.max(0.05, Math.min(0.92, (ev.clientY - r.top) / r.height)); P.settings[key] = +y.toFixed(3); lastCapKey=''; drawOverlay(); };
+    const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.body.classList.remove('dragging'); queueSave(50); syncControls(); };
+    document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
+  };
+  $('#cap').addEventListener('pointerdown', e => { if (e.target.closest('#cap > div')) start(e, 'caption_y'); });
+  $('#ttl').addEventListener('pointerdown', e => start(e, 'title_y'));
+  $('#call').addEventListener('pointerdown', e => start(e, 'callout_y'));
 }
 
 // ------------------------------------------------------------------ editor de texto
@@ -683,12 +832,14 @@ function isCut(w){ return w.removed || (P.settings.remove_fillers && w.filler); 
 function renderScript(keepScroll){
   const box = $('#script'), sc = box.parentElement.scrollTop;
   const topics = {}; (P.settings.topics||[]).forEach((tp,i) => topics[tp.word_id] = i);
+  const calls = {}, inCall = new Set(); (P.settings.callouts||[]).forEach((c,i) => { calls[c.start_id] = i; for (let x=c.start_id; x<=c.end_id; x++) inCall.add(x); });
   let html = '<p>';
   P.words.forEach((w, i) => {
     const prev = P.words[i-1];
     if (prev && w.s - prev.e > 0.7 && P.settings.cut_silence) html += `<span class="gap" title="Pausa cortada">· ${(w.s-prev.e).toFixed(1)}s ·</span>`;
     if (w.id in topics) html += `<span class="topic" data-tp="${topics[w.id]}" title="Clique para editar"><svg class="i" aria-hidden="true"><use href="#i-pin_fill"/></svg>${esc(P.settings.topics[topics[w.id]].text)}<button data-del="${topics[w.id]}" title="Remover tópico"><svg class="i" aria-hidden="true"><use href="#i-xmark"/></svg></button></span>`;
-    const cls = ['wd', w.kw && 'kw', w.removed && 'rm', (!w.removed && w.filler) && 'fl', sel && i>=sel.a && i<=sel.b && 'sel'].filter(Boolean).join(' ');
+    if (w.id in calls) html += `<span class="callout-chip" data-co="${calls[w.id]}" title="Frase de destaque — clique para editar"><svg class="i" aria-hidden="true"><use href="#i-text_bubble_fill"/></svg>${esc(P.settings.callouts[calls[w.id]].text)}<button data-delco="${calls[w.id]}" title="Remover"><svg class="i" aria-hidden="true"><use href="#i-xmark"/></svg></button></span>`;
+    const cls = ['wd', inCall.has(w.id) && 'co', w.kw && 'kw', w.removed && 'rm', (!w.removed && w.filler) && 'fl', sel && i>=sel.a && i<=sel.b && 'sel'].filter(Boolean).join(' ');
     html += `<span class="${cls}" data-i="${i}">${esc(w.text)}${w.kw && w.emoji && P.settings.emojis ? `<sup>${w.emoji}</sup>` : ''}</span> `;
     if (/[.!?…]$/.test(w.text)) html += '</p><p>';
   });
@@ -697,6 +848,8 @@ function renderScript(keepScroll){
 }
 let dragA = null;
 $('#script').addEventListener('mousedown', e => {
+  const dco = e.target.closest('[data-delco]'); if (dco){ e.preventDefault(); P.settings.callouts.splice(+dco.dataset.delco,1); queueSave(10); renderScript(true); return; }
+  const co = e.target.closest('.callout-chip'); if (co){ e.preventDefault(); const c = P.settings.callouts[+co.dataset.co]; const v = prompt('Frase de destaque:', c.text); if (v!==null){ if (v.trim()) c.text = v.trim(); else P.settings.callouts.splice(+co.dataset.co,1); queueSave(10); renderScript(true);} return; }
   const del = e.target.closest('[data-del]'); if (del){ e.preventDefault(); P.settings.topics.splice(+del.dataset.del,1); queueSave(10); renderScript(true); return; }
   const tp = e.target.closest('.topic'); if (tp){ e.preventDefault(); const t = P.settings.topics[+tp.dataset.tp]; const v = prompt('Título do tópico:', t.text); if (v!==null){ if (v.trim()) t.text = v.trim(); else P.settings.topics.splice(+tp.dataset.tp,1); queueSave(10); renderScript(true);} return; }
   const el = e.target.closest('.wd'); if (!el) return; e.preventDefault();
@@ -726,6 +879,8 @@ $('#popover').addEventListener('click', e => {
   if (a === 'cut'){ const restore = ws.every(isCut); ws.forEach(w => { w.removed = !restore; if (restore) w.filler = false; touchWord(w); }); toast(restore ? 'Trecho restaurado' : `${ws.length} palavra(s) cortada(s)`); }
   if (a === 'edit'){ const w = ws[0]; const v = prompt('Corrigir palavra:', w.text); if (v && v.trim()) { w.text = v.trim(); touchWord(w); } }
   if (a === 'emoji'){ const w = ws[0]; const v = prompt('Emoji para esta palavra (vazio remove):', w.emoji || ''); if (v !== null) { w.emoji = v.trim(); w.kw = !!w.emoji || w.kw; touchWord(w); } }
+  if (a === 'callout'){ const sug = ws.map(w => w.text).join(' ').replace(/[,.;:]$/,''); const v = prompt('Texto da frase de destaque (aparece enquanto você fala este trecho):', sug.charAt(0).toUpperCase() + sug.slice(1));
+    if (v && v.trim()) { P.settings.callouts = (P.settings.callouts||[]).filter(c => c.end_id < ws[0].id || c.start_id > ws.at(-1).id); P.settings.callouts.push({start_id: ws[0].id, end_id: ws.at(-1).id, text: v.trim()}); P.settings.callouts.sort((x,y)=>x.start_id-y.start_id); } }
   if (a === 'topic'){ const v = prompt('Título do tópico que começa aqui:', ''); if (v && v.trim()) { P.settings.topics = (P.settings.topics||[]).filter(t => t.word_id !== ws[0].id); P.settings.topics.push({word_id: ws[0].id, text: v.trim()}); P.settings.topics.sort((x,y)=>x.word_id-y.word_id); } }
   sel = null; $('#popover').classList.add('hidden'); renderScript(true); lastCapKey=''; queueSave(50);
 });
@@ -765,7 +920,7 @@ $('#aiGo').onclick = async () => {
     renderScript(); syncControls(); updateStats(); lastCapKey='';
     const sm = ai.summary || {};
     $('#aiDoneLead').textContent = `Feito pelo ${sm.provider || 'assistente'}. Tudo continua editável.`;
-    const rows = [['flame_fill','Destaques',sm.kw],['smiley','Emojis',sm.emoji],['scissors','Palavras cortadas',sm.cut],['pin_fill','Títulos de tópico',sm.topics],['pencil','Correções',sm.fix]].filter(r => r[2] !== undefined);
+    const rows = [['flame_fill','Destaques',sm.kw],['smiley','Emojis',sm.emoji],['scissors','Palavras cortadas',sm.cut],['pin_fill','Títulos de tópico',sm.topics],['text_bubble_fill','Frases de destaque',sm.callouts],['pencil','Correções',sm.fix]].filter(r => r[2] !== undefined);
     $('#aiSum').innerHTML = rows.map(([i,t,v]) => `<div class="row"><span class="t"><svg class="i c"><use href="#i-${i}"/></svg>${t}</span><b>${v}</b></div>`).join('');
     const hooks = sm.hooks || [];
     $('#aiHooksW').classList.toggle('hidden', !hooks.length);

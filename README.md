@@ -11,13 +11,15 @@ Você grava falando para a câmera, solta o arquivo no CorteFácil e ele faz o t
 
 | | |
 |---|---|
-| 💬 **Legendas automáticas** | Palavra por palavra, animadas, em 5 estilos prontos |
+| 💬 **Legendas automáticas** | Palavra por palavra, animadas, em 6 estilos prontos (inclui o “Nativo”, discreto como o texto do Instagram) |
 | ✂️ **Corta silêncios** | Remove pausas, respiros e vícios como “éé” e “ahn” |
 | 🔥 **Destaca o que importa** | Números e palavras-chave em cor, com emojis |
 | 🔍 **Zoom dinâmico** | Aproxima a cada corte para o vídeo não ficar parado |
 | 📌 **Títulos de tópico** | Cabeçalhos no topo a cada assunto |
 | 🔊 **Áudio nivelado** | Volume no padrão das redes, com música de fundo opcional |
-| 📱 **Todos os formatos** | 9:16, 4:5, 1:1 e 16:9 |
+| 🎨 **Personalize tudo** | Fonte, cores, contorno, animação, palavras por vez — e arraste legenda e título direto no vídeo. Salve como “meu estilo” |
+| 💬 **Frases de destaque** | Uma frase forte em destaque enquanto você fala o trecho (a IA sugere) |
+| 📱 **Todos os formatos** | 9:16, 4:5, 1:1 e 16:9, com guia das áreas que o Instagram cobre |
 | ✨ **IA opcional** | Se você usa Claude Code ou Codex, ele edita como um profissional |
 
 Para corrigir qualquer coisa, edite o texto: **cortar uma frase do texto corta o vídeo.**

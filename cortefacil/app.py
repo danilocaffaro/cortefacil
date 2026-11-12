@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse, JSONResponse
 import engine
 import llm
 import setup_check
-from styles import DEFAULT_SETTINGS, FORMATS, STYLES
+from styles import ANIMS, DEFAULT_SETTINGS, FONTS, FORMATS, STYLES
 
 ROOT = Path(__file__).parent
 JOBS = Path(os.environ.get("CORTEFACIL_DATA", ROOT.parent / "projetos"))
@@ -174,7 +174,7 @@ def _ai(jid: str, tasks: set[str], provider: str):
 @app.post("/api/jobs/{jid}/ai")
 def ai(jid: str, body: dict = Body(...)):
     load(jid)
-    tasks = {t for t in body.get("tasks", []) if t in {"kw", "fix", "cut", "topics", "hooks"}}
+    tasks = {t for t in body.get("tasks", []) if t in {"kw", "fix", "cut", "topics", "hooks", "callouts"}}
     provider = llm.pick(body.get("provider") or "auto")
     if not provider:
         raise HTTPException(400, "Nenhum assistente de IA (Claude Code ou Codex) foi encontrado.")
@@ -188,7 +188,7 @@ def ai(jid: str, body: dict = Body(...)):
 
 @app.get("/api/config")
 def config():
-    return {"styles": STYLES, "formats": FORMATS, "defaults": DEFAULT_SETTINGS}
+    return {"styles": STYLES, "formats": FORMATS, "defaults": DEFAULT_SETTINGS, "fonts": FONTS, "anims": ANIMS}
 
 
 @app.post("/api/upload")
