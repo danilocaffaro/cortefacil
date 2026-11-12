@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+projetos/
+logs/
+.path
+.DS_Store
+cortefacil/jobs/
+.claude/

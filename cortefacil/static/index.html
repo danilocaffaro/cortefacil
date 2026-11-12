@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CorteFácil</title>
+<link rel="icon" href="/favicon.png">
+<script>try{if(localStorage.getItem('cf_theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+<style>
+@font-face{font-family:Montserrat;font-weight:600;src:url(/fonts/Montserrat-SemiBold.ttf)}
+@font-face{font-family:Montserrat;font-weight:700;src:url(/fonts/Montserrat-Bold.ttf)}
+@font-face{font-family:Montserrat;font-weight:800;src:url(/fonts/Montserrat-ExtraBold.ttf)}
+@font-face{font-family:Montserrat;font-weight:900;src:url(/fonts/Montserrat-Black.ttf)}
+@font-face{font-family:Anton;font-weight:400;src:url(/fonts/Anton-Regular.ttf)}
+/* Tokens: Apple DESIGN.md (VoltAgent/awesome-design-md, MIT) — claro por padrão, escuro opcional */
+:root{
+  color-scheme:light;
+  --primary:#0066cc; --primary-focus:#0071e3; --link:#0066cc; --on-primary:#fff;
+  --label:#1d1d1f; --label2:#6e6e73; --label3:#7a7a7a;
+  --window:#f5f5f7; --panel:#ffffff; --elev:#ffffff; --elev2:#f5f5f7; --stage:#f5f5f7;
+  --fill:rgba(0,0,0,.14); --fill2:rgba(0,0,0,.07); --fill3:rgba(0,0,0,.04);
+  --sep:#e0e0e0; --hair:rgba(0,0,0,.08); --seg-on:#ffffff; --seg-on-ring:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+  --mat:rgba(245,245,247,.8); --blur:saturate(180%) blur(20px);
+  --tile:#272729; --chip:rgba(210,210,215,.64);
+  --ok:#248a3d; --warn:#b25000; --danger:#d70015; --kw:#8a6d00; --kw-bg:rgba(255,204,0,.22); --topic:#8944ab; --topic-bg:rgba(175,82,222,.12);
+  --green:#34c759; --yellow:#ffcc00; --red:#ff3b30; --purple:#af52de;
+  --r-xs:5px; --r-s:8px; --r-m:11px; --r-l:18px; --r-xl:18px; --r-pill:9999px;
+  --product-shadow:rgba(0,0,0,.22) 3px 5px 30px 0;
+  --focus:0 0 0 2px var(--primary-focus);
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Helvetica,Arial,sans-serif;
+  --font-d:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",Helvetica,Arial,sans-serif;
+}
+:root[data-theme=dark]{
+  color-scheme:dark;
+  --primary:#0071e3; --link:#2997ff;
+  --label:#f5f5f7; --label2:#a1a1a6; --label3:#86868b;
+  --window:#000; --panel:#1d1d1f; --elev:#272729; --elev2:#2a2a2c; --stage:#000;
+  --fill:rgba(255,255,255,.18); --fill2:rgba(255,255,255,.1); --fill3:rgba(255,255,255,.06);
+  --sep:rgba(255,255,255,.12); --hair:rgba(255,255,255,.1); --seg-on:#636366; --seg-on-ring:0 0 0 .5px rgba(255,255,255,.08);
+  --mat:rgba(22,22,23,.8);
+  --ok:#30d158; --warn:#ff9f0a; --danger:#ff453a; --kw:#ffd60a; --kw-bg:rgba(255,214,10,.14); --topic:#e3b5ff; --topic-bg:rgba(191,90,242,.2);
+  --focus:0 0 0 2px #2997ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--window);color:var(--label);font:400 14px/1.43 var(--font);letter-spacing:-.016em;-webkit-font-smoothing:antialiased}
+button:active,.pill:active,.tb:active{transform:scale(.95)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+.hidden{display:none!important}
+:focus-visible{outline:2px solid var(--primary-focus);outline-offset:2px}
+
+/* ---------- barra superior (toolbar com material) */
+header{position:sticky;top:0;z-index:30;height:52px;color:var(--label);display:flex;align-items:center;gap:10px;padding:0 14px 0 16px;
+  background:var(--mat);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border-bottom:.5px solid var(--sep)}
+.app{display:flex;align-items:center;gap:9px;font:600 17px var(--font-d);letter-spacing:-.374px}
+.app img{border-radius:6px}
+.app i{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-style:normal;font-size:14px;
+  background:linear-gradient(160deg,#FFD60A,#FF9F0A);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.4)}
+header .title{flex:1;text-align:center;color:var(--label2);font-weight:400;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tb{height:30px;padding:0 13px;border-radius:var(--r-s);background:var(--fill3);font-weight:400;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.tb:hover{background:var(--fill2)}
+.tb.icon{width:30px;padding:0;justify-content:center}
+.pill{height:32px;padding:0 18px;border-radius:var(--r-pill);background:var(--primary);color:var(--on-primary);font-weight:400;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.pill:hover{background:var(--primary-focus)} .pill:disabled{opacity:.4;cursor:default}
+.pill.lg{height:44px;padding:0 22px;font-size:17px;letter-spacing:-.374px}
+.pill.ghost{background:var(--fill2);color:var(--label)} .pill.ghost:hover{background:var(--fill)}
+.ai-btn{background:transparent;color:var(--link);box-shadow:inset 0 0 0 1px var(--link)}
+.ai-btn:hover{background:var(--primary);color:#fff;box-shadow:none}
+#aiGo{background:var(--primary);color:#fff;box-shadow:none}
+
+/* ---------- telas centrais */
+.screen{min-height:calc(100vh - 52px);display:grid;place-items:center;padding:40px 20px}
+.eyebrow{font:600 21px var(--font-d);color:var(--label);letter-spacing:.231px;letter-spacing:-.01em;margin-bottom:6px}
+.hero{max-width:760px;width:100%;text-align:center}
+.hero h1{font:600 56px/1.07 var(--font-d);letter-spacing:-.28px;margin:0 0 14px}
+.hero h1 span{color:var(--label2)}
+.hero p.sub{font:400 21px/1.38 var(--font-d);color:var(--label2);margin:0 auto 32px;max-width:620px;letter-spacing:.231px}
+.drop{display:block;border-radius:var(--r-l);padding:46px 20px;background:var(--panel);cursor:pointer;transition:.18s;
+  border:1px dashed var(--fill)}
+.drop:hover,.drop.over{border:1px solid var(--primary);background:var(--panel)}
+.drop .ic{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font-size:26px;background:var(--fill3);color:var(--primary)}
+.drop strong{display:block;font:600 21px var(--font-d);letter-spacing:.231px;margin-bottom:4px}
+.drop small{color:var(--label2);font-size:13px}
+.sample{margin-top:18px;font-size:17px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:30px}
+.chips span{background:var(--panel);border:1px solid var(--sep);border-radius:var(--r-pill);padding:6px 12px;color:var(--label2);font-size:12.5px}
+.recent{max-width:760px;width:100%;margin:44px auto 0;text-align:left}
+.recent h3{font:600 17px var(--font-d);margin:0 0 12px;letter-spacing:-.02em}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.rcard{background:var(--panel);border-radius:var(--r-l);padding:14px 16px;text-align:left;border:1px solid var(--sep)}
+.rcard:hover{border-color:var(--primary)}
+.rcard b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rcard small{color:var(--label2)}
+
+/* cards / grupos estilo Ajustes */
+.card{width:min(520px,100%);background:var(--panel);border-radius:var(--r-l);padding:32px;border:1px solid var(--sep)}
+.card h2{font:600 28px/1.14 var(--font-d);letter-spacing:-.28px;margin:0 0 6px}
+.card .lead{color:var(--label2);font-size:15px;margin:0 0 22px}
+.group{background:var(--elev2);border-radius:var(--r-m);overflow:hidden}
+.item{display:flex;gap:12px;align-items:center;padding:12px 14px;position:relative}
+.item+.item:before{content:"";position:absolute;left:52px;right:0;top:0;height:.5px;background:var(--sep)}
+.item .ico{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:15px;flex:none}
+.item .tx{flex:1;min-width:0} .item .tx b{font-weight:600;display:block} .item .tx small{color:var(--label2);display:block}
+.ok{color:var(--ok);font-weight:600} .warn{color:var(--warn);font-weight:600}
+.progress{height:4px;border-radius:2px;background:var(--fill2);overflow:hidden;margin-top:7px}
+.progress i{display:block;height:100%;width:0;background:var(--primary);border-radius:2px;transition:width .4s}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--fill);border-top-color:var(--label);animation:sp .8s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.check{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;flex:none;background:var(--fill2);color:var(--label3)}
+.check.done{background:var(--green);color:#fff} .check.on{background:transparent;border:2px solid var(--primary)}
+.help{margin-top:14px;font-size:12.5px;color:var(--label2);background:var(--fill3);border-radius:var(--r-m);padding:10px 12px}
+.help code{background:var(--fill2);padding:1px 5px;border-radius:4px;font:12px "SF Mono",ui-monospace,Menlo,monospace}
+
+/* ---------- editor */
+#editor{display:grid;grid-template-columns:minmax(380px,1fr) 400px;height:calc(100vh - 52px)}
+.stage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;min-height:0;background:var(--stage)}
+.frame{position:relative;background:#000;border-radius:var(--r-l);overflow:hidden;box-shadow:var(--product-shadow);
+  height:min(calc(100vh - 210px),900px);max-width:100%}
+.frame canvas.bg{position:absolute;inset:0;width:100%;height:100%;filter:blur(18px) brightness(.85);transform:scale(1.1)}
+.frame video{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 38%;transition:transform .06s}
+.frame.fit-blur video{object-fit:contain}
+.cap{position:absolute;left:0;right:0;text-align:center;pointer-events:none;line-height:1.22;padding:0 7%;text-wrap:balance}
+.cap .w{display:inline-block;margin:0 .13em;transition:transform .07s}
+.cap .emo{display:block;margin-bottom:.15em;animation:pop .18s}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.ttl{position:absolute;left:0;right:0;text-align:center;color:#fff;font-family:Montserrat;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,.75);padding:0 8%;pointer-events:none;transition:opacity .25s}
+.pbar{position:absolute;left:0;bottom:0;height:5px}
+.bigplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:68px;height:68px;border-radius:50%;
+  background:var(--chip);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);color:#1d1d1f;font-size:24px;padding-left:5px}
+.transport{display:flex;align-items:center;gap:12px;width:min(560px,100%)}
+.transport .pp{width:34px;height:34px;border-radius:50%;background:var(--fill2);font-size:13px;flex:none}
+.transport .pp:hover{background:var(--fill)}
+.transport .tm{font:400 12px var(--font);font-variant-numeric:tabular-nums;color:var(--label2);flex:none;width:86px;text-align:right}
+.stats{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.stats span{font-size:12px;color:var(--label2);background:var(--panel);border:1px solid var(--sep);border-radius:var(--r-pill);padding:4px 10px}
+.stats b{color:var(--label);font-weight:600}
+
+/* inspetor */
+.inspector{background:var(--panel);border-left:1px solid var(--sep);display:flex;flex-direction:column;min-height:0}
+.inspector .top{padding:12px 14px;border-bottom:1px solid var(--sep)}
+.pane{overflow:auto;padding:6px 16px 24px;flex:1}
+.sec{font:600 12px var(--font);text-transform:uppercase;letter-spacing:.04em;color:var(--label2);margin:20px 4px 8px}
+/* segmented control (macOS) */
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--fill3);border-radius:8px;padding:2px;gap:2px}
+.seg button{height:28px;border-radius:6px;color:var(--label);font-weight:400;font-size:13px;white-space:nowrap;padding:0 8px;position:relative}
+.seg button:hover{background:var(--fill3)}
+.seg button.on{background:var(--seg-on);box-shadow:var(--seg-on-ring);font-weight:600}
+.seg.lg button{height:32px;font-size:14px}
+.seg button:active{transform:none}
+/* switch (iOS) */
+.sw{position:relative;width:42px;height:25px;flex:none}
+.sw input{position:absolute;opacity:0;width:0;height:0}
+.sw i{position:absolute;inset:0;border-radius:99px;background:var(--fill);transition:background .25s;cursor:pointer}
+.sw i:after{content:"";position:absolute;width:21px;height:21px;left:2px;top:2px;border-radius:50%;background:#fff;box-shadow:0 0 0 .5px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.15);transition:transform .25s}
+.sw input:checked+i{background:var(--green)} .sw input:checked+i:after{transform:translateX(17px)}
+.sw input:focus-visible+i{outline:2px solid var(--primary-focus);outline-offset:2px}
+/* slider (macOS) */
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:none;--v:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--primary) var(--v),var(--fill) var(--v))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:16px;margin-top:-6px;border-radius:99px;background:#fff;box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 .5px 4px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--fill)}
+input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--primary)}
+input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radius:99px;background:#fff}
+/* linhas estilo Ajustes */
+.rows{background:var(--elev2);border-radius:var(--r-m);overflow:hidden}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;min-height:44px;position:relative}
+.row+.row:before{content:"";position:absolute;left:12px;right:0;top:0;height:.5px;background:var(--sep)}
+.row .t{font-weight:400} .row .d{font-size:11.5px;color:var(--label2)}
+.field{width:100%;height:36px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--hair);background:var(--panel);color:var(--label);font:inherit;font-size:14px}
+.field:focus{outline:2px solid var(--primary-focus);outline-offset:0}
+.field::placeholder{color:var(--label3)}
+/* estilos */
+.styles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sty{border-radius:var(--r-m);overflow:hidden;background:var(--panel);text-align:left;border:1px solid var(--sep)}
+.sty.on{border-color:var(--primary-focus);box-shadow:0 0 0 1px var(--primary-focus)}
+.sty .pv{height:74px;display:grid;place-items:center;background:var(--tile);padding:0 6px;text-align:center;line-height:1.1}
+.sty .nm{padding:7px 10px 8px;font-weight:600} .sty .nm small{display:block;color:var(--label2);font-weight:400;font-size:11px}
+.swatches{display:flex;gap:9px;flex-wrap:wrap;padding:4px 2px}
+.swc{width:24px;height:24px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.3)}
+.swc.on{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--primary-focus)}
+.swc.auto{background:var(--panel);border:1px dashed var(--label3);position:relative}
+.swc.auto:after{content:"A";font:600 11px var(--font);color:var(--label2);position:absolute;inset:0;display:grid;place-items:center}
+/* texto */
+.hint{font-size:12px;color:var(--label2);background:var(--fill3);border-radius:var(--r-m);padding:10px 12px;margin:12px 0}
+.hint b{color:var(--label);font-weight:600}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--label2);margin-bottom:10px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+.script p{margin:0 0 10px;line-height:2.05;font-size:14px}
+.wd{border-radius:5px;padding:2px 2px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.wd:hover{background:var(--fill2)}
+.wd.kw{color:var(--kw);font-weight:600;background:var(--kw-bg)}
+.wd.rm{color:var(--danger);text-decoration:line-through;opacity:.6}
+.wd.fl{color:var(--label3);font-style:italic}
+.wd.sel{background:var(--primary)!important;color:#fff!important}
+.wd sup{font-size:10px;margin-left:1px}
+.gap{font-size:10.5px;color:var(--label3);margin:0 3px}
+.topic{display:inline-flex;align-items:center;gap:4px;background:var(--topic-bg);color:var(--topic);border-radius:var(--r-pill);padding:1px 4px 1px 9px;font-size:12px;font-weight:600;margin-right:4px;cursor:pointer}
+.topic button{width:16px;height:16px;border-radius:50%;font-size:9px;background:var(--fill2)}
+/* popover de seleção */
+.popover{position:fixed;z-index:40;display:flex;gap:2px;padding:4px;border-radius:var(--r-m);background:var(--mat);
+  -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--hair)}
+.popover button{height:30px;padding:0 11px;border-radius:var(--r-s);font-weight:400;color:var(--label);white-space:nowrap}
+.popover button:hover{background:var(--primary);color:#fff}
+/* sheets */
+.backdrop{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.sheet{width:min(500px,100%);max-height:calc(100vh - 40px);overflow:auto;background:var(--panel);border-radius:var(--r-l);padding:28px;border:1px solid var(--hair);animation:rise .25s cubic-bezier(.2,.9,.3,1.1)}
+@keyframes rise{from{transform:translateY(16px) scale(.98);opacity:0}}
+.sheet h2{font:600 28px/1.14 var(--font-d);letter-spacing:-.28px;margin:0 0 4px;text-align:center}
+.sheet .lead{text-align:center;color:var(--label2);margin:6px 0 20px;font-size:14px}
+
+.sheet .acts{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.sheet video{width:100%;max-height:58vh;border-radius:var(--r-l);background:#000;margin:4px 0 6px}
+.hooks{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.hooks button{text-align:left;background:var(--panel);border:1px solid var(--sep);border-radius:var(--r-pill);padding:10px 16px;font-weight:400}
+.hooks button:hover{border-color:var(--primary)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:60;background:var(--label);color:var(--window);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  padding:10px 18px;border-radius:var(--r-pill);font-weight:400}
+@media (max-width:1068px){.hero h1{font-size:40px;letter-spacing:0}}
+@media (max-width:900px){#editor{grid-template-columns:1fr;height:auto}.frame{height:70vh}.inspector{border-left:0;border-top:1px solid var(--sep)}}
+@media (max-width:640px){.hero h1{font-size:34px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="app"><img src="/favicon.png" width="26" height="26" alt="">CorteFácil</div>
+  <button class="tb hidden" id="homeBtn">‹ Início</button>
+  <div class="title" id="fname"></div>
+  <button class="pill ai-btn hidden" id="aiBtn">✨ Turbinar com IA</button>
+  <button class="pill hidden" id="exportBtn">Exportar</button>
+  <button class="tb icon" id="themeBtn" title="Tema claro/escuro">☾</button>
+  <button class="tb icon" id="quitBtn" title="Fechar o CorteFácil">⏻</button>
+</header>
+
+<!-- 0. ONBOARDING (primeira vez) -->
+<section id="setup" class="screen hidden">
+  <div class="card">
+    <div style="text-align:center;margin-bottom:18px"><img src="/favicon.png" width="64" height="64" alt=""></div>
+    <h2 style="text-align:center">Bem-vindo ao CorteFácil</h2>
+    <p class="lead" style="text-align:center">Vamos deixar tudo pronto. Isso só acontece na primeira vez.</p>
+    <div class="group">
+      <div class="item"><div class="ico" style="background:#0066cc">🎬</div><div class="tx"><b>Editor de vídeo</b><small>Cortes, legendas e exportação</small></div><span id="suFF" class="spin"></span></div>
+      <div class="item"><div class="ico" style="background:#34c759">🎙️</div><div class="tx"><b>IA de transcrição</b><small id="suModelTx">Verificando…</small><div class="progress" id="suBarW"><i id="suBar"></i></div></div><span id="suModel" class="spin"></span></div>
+      <div class="item"><div class="ico" style="background:#af52de">✨</div><div class="tx"><b>Assistente de IA <span style="color:var(--label3);font-weight:400">· opcional</span></b><small id="suLLMTx">Procurando Claude Code ou Codex…</small></div><span id="suLLM" class="spin"></span></div>
+    </div>
+    <div class="help hidden" id="suLLMHelp">Sem problema: o CorteFácil funciona sem ele. Se você instalar o <a href="https://claude.com/claude-code" target="_blank">Claude Code</a> ou o <a href="https://developers.openai.com/codex/cli" target="_blank">Codex</a> e entrar com sua conta, o botão <b>✨ Turbinar com IA</b> passa a escolher destaques, emojis e títulos e a cortar repetições. Ele usa a sua conta e não precisa de chave.</div>
+    <div class="help hidden" id="suErr" style="color:var(--danger)"></div>
+    <div style="text-align:center;margin-top:22px"><button class="pill lg" id="suGo" disabled>Começar</button></div>
+  </div>
+</section>
+
+<!-- 1. INÍCIO -->
+<section id="home" class="screen hidden">
+  <div class="hero">
+    <div class="eyebrow">Editor automático para Reels, TikTok e Shorts</div>
+    <h1>Do vídeo bruto ao<br><span>Reel pronto.</span></h1>
+    <p class="sub">Solte a gravação crua. O CorteFácil transcreve, corta os silêncios, cria legendas animadas e destaca o que importa.</p>
+    <label class="drop" id="drop">
+      <div class="ic">↑</div>
+      <strong>Arraste seu vídeo aqui</strong>
+      <small>ou clique para escolher · MP4, MOV, WEBM</small>
+      <input type="file" id="fileIn" accept="video/*" hidden>
+    </label>
+    <div class="sample" id="sampleWrap"><a href="#" id="sampleBtn">Não tem um vídeo agora? Experimente com um exemplo ›</a></div>
+    <div class="chips"><span>💬 Legendas automáticas</span><span>✂️ Corta silêncios e “éé”</span><span>🔥 Destaques e emojis</span><span>🔍 Zoom dinâmico</span><span>📌 Títulos de tópico</span><span>🔊 Áudio nivelado</span><span>🎵 Música de fundo</span></div>
+    <div class="recent hidden" id="recentWrap"><h3>Recentes</h3><div class="rgrid" id="recent"></div></div>
+  </div>
+</section>
+
+<!-- 2. PROCESSANDO -->
+<section id="processing" class="screen hidden">
+  <div class="card">
+    <h2 id="procTitle">Enviando vídeo…</h2>
+    <p class="lead" id="procSub">Isso leva poucos segundos.</p>
+    <div class="progress" style="height:6px;border-radius:3px"><i id="procBar"></i></div>
+    <div class="group" style="margin-top:20px" id="steps">
+      <div class="item" data-s="upload"><span class="check">✓</span><div class="tx">Enviando o vídeo</div></div>
+      <div class="item" data-s="proxy"><span class="check">✓</span><div class="tx">Preparando a pré‑visualização</div></div>
+      <div class="item" data-s="transcribe"><span class="check">✓</span><div class="tx">Transcrevendo a fala</div></div>
+      <div class="item" data-s="silence"><span class="check">✓</span><div class="tx">Encontrando silêncios</div></div>
+      <div class="item" data-s="keywords"><span class="check">✓</span><div class="tx">Escolhendo destaques</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. EDITOR -->
+<section id="editor" class="hidden">
+  <div class="stage">
+    <div class="frame" id="frame">
+      <canvas class="bg" id="bgc" width="64" height="114"></canvas>
+      <video id="vid" playsinline preload="auto"></video>
+      <div class="ttl" id="ttl"></div>
+      <div class="cap" id="cap"></div>
+      <div class="pbar" id="pbar"></div>
+      <button class="bigplay" id="bigplay" aria-label="Reproduzir">▶</button>
+    </div>
+    <div class="transport">
+      <button class="pp" id="pp" aria-label="Reproduzir ou pausar">▶</button>
+      <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Posição">
+      <div class="tm" id="tm">0:00 / 0:00</div>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <aside class="inspector">
+    <div class="top"><div class="seg lg" id="tabs"><button data-t="style" class="on">Estilo</button><button data-t="text">Texto</button><button data-t="adjust">Ajustes</button></div></div>
+
+    <div class="pane" data-p="style">
+      <div class="sec">Legenda</div>
+      <div class="styles" id="styles"></div>
+      <div class="sec">Cor de destaque</div>
+      <div class="swatches" id="swatches"></div>
+      <div class="sec">Tamanho e posição</div>
+      <div class="rows">
+        <div class="row"><span class="t" style="width:70px">Tamanho</span><input type="range" id="capScale" min="0.6" max="1.5" step="0.05"></div>
+        <div class="row"><span class="t" style="width:70px">Altura</span><input type="range" id="capY" min="0.15" max="0.88" step="0.01"></div>
+      </div>
+      <div class="sec">Extras</div>
+      <div class="rows">
+        <div class="row"><div><div class="t">Emojis automáticos</div><div class="d">Aparecem junto das palavras‑chave</div></div><label class="sw"><input type="checkbox" data-set="emojis"><i></i></label></div>
+        <div class="row"><div><div class="t">Mostrar legendas</div></div><label class="sw"><input type="checkbox" data-set="captions"><i></i></label></div>
+      </div>
+      <div class="sec">Título de abertura (gancho)</div>
+      <input class="field" type="text" id="title" placeholder="Ex.: 3 erros que te deixam pobre 💸" maxlength="90">
+      <div class="seg" id="titleSecs" style="margin-top:8px"><button data-v="3">3 s</button><button data-v="5">5 s</button><button data-v="999">Vídeo todo</button></div>
+    </div>
+
+    <div class="pane hidden" data-p="text">
+      <div class="hint">Clique numa palavra para <b>ir até ela</b>. Arraste ou use <b>Shift+clique</b> para selecionar um trecho e <b>destacar</b>, <b>cortar</b>, <b>editar</b> ou marcar um <b>tópico</b>. Cortar o texto corta o vídeo.</div>
+      <div class="legend"><span><i style="background:var(--yellow)"></i>Destaque</span><span><i style="background:var(--danger)"></i>Cortado</span><span><i style="background:var(--label3)"></i>Vício (“éé”)</span><span><i style="background:var(--purple)"></i>Tópico</span></div>
+      <div class="script" id="script"></div>
+    </div>
+
+    <div class="pane hidden" data-p="adjust">
+      <div class="sec">Formato</div>
+      <div class="seg" id="format"><button data-v="9:16">9:16</button><button data-v="4:5">4:5</button><button data-v="1:1">1:1</button><button data-v="16:9">16:9</button></div>
+      <div class="sec">Enquadramento</div>
+      <div class="seg" id="fit"><button data-v="crop">Preencher</button><button data-v="blur">Fundo desfocado</button></div>
+      <div class="sec">Ritmo dos cortes</div>
+      <div class="seg" id="pace"><button data-v="suave">Suave</button><button data-v="normal">Normal</button><button data-v="acelerado">Acelerado</button></div>
+      <div class="sec">Edição automática</div>
+      <div class="rows">
+        <div class="row"><div><div class="t">Cortar silêncios</div><div class="d">Remove pausas e respiros longos</div></div><label class="sw"><input type="checkbox" data-set="cut_silence"><i></i></label></div>
+        <div class="row"><div><div class="t">Remover vícios</div><div class="d">“éé”, “ahn”, “hum”…</div></div><label class="sw"><input type="checkbox" data-set="remove_fillers"><i></i></label></div>
+        <div class="row"><div><div class="t">Zoom dinâmico</div><div class="d">Alterna o enquadramento a cada corte</div></div><label class="sw"><input type="checkbox" data-set="zoom"><i></i></label></div>
+        <div class="row"><div><div class="t">Barra de progresso</div><div class="d">Ajuda a segurar a atenção até o fim</div></div><label class="sw"><input type="checkbox" data-set="progress_bar"><i></i></label></div>
+        <div class="row"><div><div class="t">Realçar imagem</div><div class="d">Cor mais viva e nitidez</div></div><label class="sw"><input type="checkbox" data-set="enhance"><i></i></label></div>
+      </div>
+      <div class="sec">Música de fundo</div>
+      <div class="rows">
+        <div class="row"><div style="min-width:0"><div class="t" id="musicName">Nenhuma</div><div class="d">Abaixa sozinha quando você fala</div></div>
+          <div style="display:flex;gap:6px"><button class="tb hidden" id="musicDel">Remover</button><label class="tb">Escolher…<input type="file" id="musicIn" accept="audio/*" hidden></label></div></div>
+        <div class="row"><span class="t" style="width:70px">Volume</span><input type="range" id="musicVol" min="0.03" max="0.4" step="0.01"></div>
+      </div>
+    </div>
+  </aside>
+</section>
+
+<div class="popover hidden" id="popover">
+  <button data-a="kw">Destacar</button><button data-a="cut">Cortar</button><button data-a="edit">Editar</button><button data-a="emoji">Emoji</button><button data-a="topic">Tópico</button>
+</div>
+
+<!-- sheet: IA -->
+<div class="backdrop hidden" id="aiSheet">
+  <div class="sheet">
+    <div id="aiForm">
+      <h2>✨ Turbinar com IA</h2>
+      <p class="lead" id="aiLead">A IA lê a transcrição e edita como um profissional.</p>
+      <div class="seg hidden" id="aiProv" style="margin-bottom:14px"></div>
+      <div class="rows">
+        <div class="row"><div><div class="t">Destaques e emojis</div><div class="d">Escolhe as palavras mais fortes</div></div><label class="sw"><input type="checkbox" data-ai="kw" checked><i></i></label></div>
+        <div class="row"><div><div class="t">Cortar repetições e erros</div><div class="d">Frases recomeçadas, gaguejadas, “corta”</div></div><label class="sw"><input type="checkbox" data-ai="cut" checked><i></i></label></div>
+        <div class="row"><div><div class="t">Títulos de tópico</div><div class="d">Cabeçalhos no topo a cada assunto</div></div><label class="sw"><input type="checkbox" data-ai="topics" checked><i></i></label></div>
+        <div class="row"><div><div class="t">Sugerir ganchos</div><div class="d">3 títulos de abertura que prendem</div></div><label class="sw"><input type="checkbox" data-ai="hooks" checked><i></i></label></div>
+        <div class="row"><div><div class="t">Corrigir a transcrição</div><div class="d">Nomes e termos técnicos</div></div><label class="sw"><input type="checkbox" data-ai="fix" checked><i></i></label></div>
+      </div>
+      <div class="acts"><button class="pill ghost lg" data-close>Cancelar</button><button class="pill lg ai-btn" id="aiGo">Turbinar</button></div>
+    </div>
+    <div id="aiNone" class="hidden">
+      <h2>Assistente de IA</h2>
+      <p class="lead">Nenhum assistente foi encontrado neste computador.</p>
+      <div class="help" style="margin-top:0">O CorteFácil usa o assistente que <b>você já tem</b>, com a sua conta e sem chave de API:<br><br>
+        • <a href="https://claude.com/claude-code" target="_blank">Claude Code</a> (Anthropic)<br>• <a href="https://developers.openai.com/codex/cli" target="_blank">Codex</a> (OpenAI)<br><br>
+        Instale um deles, abra o Terminal, digite <code>claude</code> ou <code>codex</code> e entre com sua conta. Depois reabra o CorteFácil.</div>
+      <div class="acts"><button class="pill lg" data-close>Entendi</button></div>
+    </div>
+    <div id="aiRun" class="hidden" style="text-align:center;padding:20px 0">
+      <div class="spin" style="width:34px;height:34px;border-width:3px;margin:0 auto 16px"></div>
+      <h2 id="aiRunT">Lendo seu vídeo…</h2><p class="lead" style="margin:0">Leva de 10 a 40 segundos.</p>
+    </div>
+    <div id="aiDone" class="hidden">
+      <h2>Pronto! ✨</h2><p class="lead" id="aiDoneLead"></p>
+      <div class="rows" id="aiSum"></div>
+      <div id="aiHooksW" class="hidden"><div class="sec">Escolha um gancho</div><div class="hooks" id="aiHooks"></div></div>
+      <div class="acts"><button class="pill lg" data-close>Ver resultado</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- sheet: exportar -->
+<div class="backdrop hidden" id="exSheet">
+  <div class="sheet">
+    <h2 id="mTitle">Exportando…</h2>
+    <p class="lead" id="mSub">Aplicando cortes, legendas e efeitos.</p>
+    <div class="progress" id="mBarWrap" style="height:6px"><i id="mBar"></i></div>
+    <video id="mVid" class="hidden" controls playsinline></video>
+    <div class="acts hidden" id="mActs"><button class="pill ghost lg" id="mClose">Continuar editando</button><a class="pill lg" id="mDl" href="#" style="text-decoration:none">Baixar MP4</a></div>
+  </div>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+let CFG, SETUP, JOB, P, L, WMAP = {}, sel = null;
+const vid = $('#vid');
+const fmt = t => { t = Math.max(0, t || 0); return Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0'); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.remove('hidden'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.add('hidden'),2600); }
+function show(id){
+  for (const s of ['setup','home','processing','editor']) $('#'+s).classList.toggle('hidden', s!==id);
+  const ed = id==='editor';
+  $('#homeBtn').classList.toggle('hidden', id==='home'||id==='setup'); $('#exportBtn').classList.toggle('hidden', !ed); $('#aiBtn').classList.toggle('hidden', !ed);
+  if (!ed) $('#fname').textContent = '';
+}
+function rangeFill(el){ const v=(el.value-el.min)/(el.max-el.min)*100; el.style.setProperty('--v', v+'%'); }
+document.addEventListener('input', e => { if (e.target.type==='range') rangeFill(e.target); });
+const api = async (url, opt={}) => { const r = await fetch(url, opt); const j = await r.json().catch(()=>({})); if (!r.ok) throw new Error(j.detail || 'Erro'); return j; };
+const put = body => api('/api/jobs/'+JOB, {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+
+// ------------------------------------------------------------------ tema (claro padrão)
+function syncThemeBtn(){ $('#themeBtn').textContent = document.documentElement.dataset.theme==='dark' ? '☀︎' : '☾'; }
+$('#themeBtn').onclick = () => { const d = document.documentElement; if (d.dataset.theme==='dark') delete d.dataset.theme; else d.dataset.theme='dark';
+  try { localStorage.setItem('cf_theme', d.dataset.theme||'light'); } catch(e){} syncThemeBtn(); };
+syncThemeBtn();
+
+// ------------------------------------------------------------------ onboarding
+async function runSetup(){
+  show('setup');
+  await api('/api/setup/prepare', {method:'POST'});
+  const tick = async () => {
+    const s = SETUP = await api('/api/setup');
+    $('#suFF').outerHTML = `<span id="suFF" class="${s.ffmpeg?'ok':'warn'}">${s.ffmpeg?'✓':'!'}</span>`;
+    const m = s.model;
+    if (m.ready){ $('#suModel').outerHTML = '<span id="suModel" class="ok">✓</span>'; $('#suModelTx').textContent = m.engine + ' · pronto'; $('#suBarW').classList.add('hidden'); }
+    else { $('#suModelTx').textContent = `Baixando ${m.engine} · ${(m.bytes/1e6).toFixed(0)} de ${(m.total/1e6).toFixed(0)} MB`; $('#suBar').style.width = (m.progress*100)+'%'; }
+    if (m.error){ $('#suErr').textContent = m.error; $('#suErr').classList.remove('hidden'); }
+    const has = s.llm.claude || s.llm.codex;
+    $('#suLLM').outerHTML = `<span id="suLLM" class="${has?'ok':''}" style="${has?'':'color:var(--label3)'}">${has?'✓':'—'}</span>`;
+    $('#suLLMTx').textContent = has ? [s.llm.claude&&'Claude Code', s.llm.codex&&'Codex'].filter(Boolean).join(' e ') + ' encontrado' : 'Não encontrado · o app funciona sem ele';
+    $('#suLLMHelp').classList.toggle('hidden', has);
+    $('#suGo').disabled = !(m.ready && s.ffmpeg);
+    $('#suGo').textContent = m.ready ? 'Começar' : 'Preparando…';
+    if (!m.ready && !m.error) setTimeout(tick, 1000);
+  };
+  tick();
+}
+$('#suGo').onclick = () => { try { localStorage.setItem('cf_onboarded','1'); } catch(e){} goHome(); };
+
+// ------------------------------------------------------------------ início
+async function goHome(){
+  location.hash = ''; JOB = null; P = null; L = null; vid.removeAttribute('src'); show('home');
+  $('#sampleWrap').classList.toggle('hidden', !(SETUP && SETUP.sample));
+  const list = await api('/api/jobs').catch(()=>[]);
+  $('#recentWrap').classList.toggle('hidden', !list.length);
+  $('#recent').innerHTML = list.map(j => `<button class="rcard" data-id="${j.id}"><b>${esc(j.name)}</b><small>${fmt(j.duration)} · ${j.done?'✓ exportado':'em edição'}</small></button>`).join('');
+  $$('.rcard').forEach(b => b.onclick = () => { location.hash = b.dataset.id; });
+}
+$('#homeBtn').onclick = () => { pause(); goHome(); };
+$('#quitBtn').onclick = async () => { if (!confirm('Fechar o CorteFácil? Seus projetos continuam salvos.')) return;
+  await fetch('/api/shutdown',{method:'POST'}).catch(()=>{}); document.body.innerHTML = '<div class="screen"><div class="card" style="text-align:center"><h2>Até logo! 👋</h2><p class="lead">O CorteFácil foi fechado. Para abrir de novo, use o ícone do CorteFácil.</p></div></div>'; };
+
+const drop = $('#drop');
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) send(e.dataTransfer.files[0]); });
+$('#fileIn').addEventListener('change', e => e.target.files[0] && send(e.target.files[0]));
+$('#sampleBtn').onclick = async e => { e.preventDefault(); show('processing'); const j = await api('/api/sample',{method:'POST'}); location.hash = j.id; };
+
+function send(file){
+  show('processing'); $('#procTitle').textContent = 'Enviando vídeo…';
+  const fd = new FormData(); fd.append('file', file);
+  const xhr = new XMLHttpRequest(); xhr.open('POST', '/api/upload');
+  xhr.upload.onprogress = e => { if (e.lengthComputable) { $('#procBar').style.width = (e.loaded/e.total*25)+'%'; $('#procSub').textContent = `Enviando… ${Math.round(e.loaded/e.total*100)}%`; } };
+  xhr.onload = () => { if (xhr.status !== 200) { alert(JSON.parse(xhr.responseText).detail || 'Erro no envio'); goHome(); return; } location.hash = JSON.parse(xhr.responseText).id; };
+  xhr.onerror = () => { alert('Falha no envio'); goHome(); };
+  xhr.send(fd);
+}
+const ORDER = ['upload','probe','proxy','audio','transcribe','silence','keywords','ready'];
+async function poll(){
+  const r = await fetch('/api/jobs/' + JOB); if (!r.ok) return goHome();
+  const s = await r.json();
+  if (s.state === 'error') { alert('Não consegui analisar o vídeo:\n' + s.error); return goHome(); }
+  if (s.state === 'ready') return openEditor(s);
+  show('processing');
+  $('#procTitle').textContent = s.message || 'Analisando…';
+  $('#procSub').textContent = 'A IA está ouvindo seu vídeo.';
+  $('#procBar').style.width = (25 + (s.progress||0)*75) + '%';
+  let cur = ORDER.indexOf(s.stage); if (s.stage==='probe') cur = ORDER.indexOf('proxy'); if (s.stage==='audio') cur = ORDER.indexOf('transcribe');
+  $$('#steps .item').forEach(li => { const i = ORDER.indexOf(li.dataset.s), c = li.querySelector('.check');
+    c.className = 'check ' + (i < cur ? 'done' : i === cur ? 'on' : ''); c.textContent = i < cur ? '✓' : ''; });
+  setTimeout(poll, 700);
+}
+
+// ------------------------------------------------------------------ editor
+function openEditor(s){
+  P = s.project; L = s.layout; WMAP = {}; P.words.forEach(w => WMAP[w.id] = w);
+  show('editor'); $('#fname').textContent = P.name;
+  vid.src = `/api/jobs/${JOB}/proxy`;
+  buildStyleCards(); buildSwatches(); bindSettings(); renderScript(); applyFrame(); updateStats();
+  if (s.render && s.render.state === 'running') exportVideo(true);
+}
+function style(){ return CFG.styles[P.settings.style] || CFG.styles.viral; }
+function sampleHTML(st){
+  return ['VOCÊ','SABIA','DISSO?'].map((w,i)=>{
+    const t = st.upper ? w : w.charAt(0)+w.slice(1).toLowerCase();
+    let c = st.text, bg='';
+    if (i===1){ if (st.active_mode==='color') c = st.active; else if (st.active_mode==='box') bg=`background:${st.box};border-radius:4px;padding:0 4px;`; else c = st.kw; }
+    const stroke = st.stroke ? `-webkit-text-stroke:${Math.max(1.5,st.stroke/5)}px ${st.stroke_color};paint-order:stroke fill;` : '';
+    return `<span style="font-family:${st.css_font};font-weight:${st.css_weight};font-size:${Math.min(24, st.size/3.9)}px;color:${c};${stroke}${bg}text-shadow:0 2px 6px #0009;margin:0 2px">${t}</span>`;
+  }).join(' ');
+}
+function buildStyleCards(){
+  $('#styles').innerHTML = Object.entries(CFG.styles).map(([id, st]) =>
+    `<button class="sty ${P.settings.style===id?'on':''}" data-id="${id}"><div class="pv">${sampleHTML(st)}</div><div class="nm">${st.name}<small>${st.desc}</small></div></button>`).join('');
+  $$('.sty').forEach(b => b.onclick = () => { set({style: b.dataset.id, caption_y: null}); buildStyleCards(); syncControls(); });
+}
+const SWATCHES = [null,'#FFD60A','#30D158','#64D2FF','#0A84FF','#BF5AF2','#FF375F','#FF453A','#FF9F0A','#FFFFFF'];
+function buildSwatches(){
+  $('#swatches').innerHTML = SWATCHES.map(c => `<button class="swc ${c?'':'auto'} ${(P.settings.accent||null)===c?'on':''}" data-c="${c||''}" title="${c||'Cor do estilo'}" style="${c?'background:'+c:''}"></button>`).join('');
+  $$('.swc').forEach(b => b.onclick = () => { set({accent: b.dataset.c || null}); buildSwatches(); });
+}
+function segBind(id, key, conv=(v=>v)){ $('#'+id).querySelectorAll('button').forEach(b => b.onclick = () => { set({[key]: conv(b.dataset.v)}); syncControls(); }); }
+let bound = false;
+function bindSettings(){
+  if (!bound){ bound = true;
+    segBind('format','format'); segBind('fit','fit'); segBind('pace','pace'); segBind('titleSecs','title_secs', Number);
+    $$('[data-set]').forEach(i => i.onchange = () => set({[i.dataset.set]: i.checked}));
+    $('#capScale').oninput = e => set({caption_scale: +e.target.value}, 500);
+    $('#capY').oninput = e => set({caption_y: +e.target.value}, 500);
+    $('#title').oninput = e => set({title: e.target.value}, 600);
+    $('#musicVol').oninput = e => set({music_volume: +e.target.value}, 500);
+    $('#musicIn').onchange = async e => { const f = e.target.files[0]; if (!f) return;
+      const fd = new FormData(); fd.append('file', f);
+      try { const j = await api(`/api/jobs/${JOB}/music`, {method:'POST', body: fd}); P.settings.music = j.music; P.musicLabel = j.label; syncControls(); toast('🎵 Música adicionada'); } catch(err){ toast(err.message); } };
+    $('#musicDel').onclick = () => { set({music: null}); syncControls(); };
+  }
+  syncControls();
+}
+function syncControls(){
+  const S = P.settings;
+  for (const [id,key] of [['format','format'],['fit','fit'],['pace','pace'],['titleSecs','title_secs']])
+    $('#'+id).querySelectorAll('button').forEach(b => b.classList.toggle('on', String(S[key]) === b.dataset.v));
+  $$('[data-set]').forEach(i => i.checked = !!S[i.dataset.set]);
+  $('#capScale').value = S.caption_scale || 1; $('#capY').value = S.caption_y ?? style().y;
+  if (document.activeElement !== $('#title')) $('#title').value = S.title || '';
+  $('#musicVol').value = S.music_volume || 0.12;
+  $('#musicName').textContent = S.music ? (P.musicLabel || 'Música adicionada') : 'Nenhuma';
+  $('#musicDel').classList.toggle('hidden', !S.music);
+  $$('input[type=range]').forEach(rangeFill);
+  applyFrame();
+}
+let saveT, pendingWords = {};
+function set(obj, delay=0){ Object.assign(P.settings, obj); queueSave(delay); lastCapKey=''; drawOverlay(); }
+function queueSave(delay=250){
+  clearTimeout(saveT);
+  saveT = setTimeout(async () => {
+    const body = {settings: P.settings, words: Object.values(pendingWords)}; pendingWords = {};
+    try { L = await put(body); updateStats(); renderScript(true); lastCapKey=''; drawOverlay(); } catch(e){ toast(e.message); }
+  }, delay);
+}
+function touchWord(w){ pendingWords[w.id] = {id:w.id, text:w.text, kw:w.kw, removed:w.removed, emoji:w.emoji}; }
+function updateStats(){
+  const cuts = L.segments.length - 1, kws = P.words.filter(w => w.kw && !w.removed).length;
+  $('#stats').innerHTML = `<span>⏱ ${fmt(L.duration_in)} → <b>${fmt(L.duration_out)}</b></span><span>✂️ ${cuts} cortes · ${(L.duration_in - L.duration_out).toFixed(1)}s removidos</span><span>🔥 ${kws} destaques</span>`;
+}
+function applyFrame(){
+  const [W,H] = CFG.formats[P.settings.format] || [1080,1920];
+  const fr = $('#frame'); fr.style.aspectRatio = `${W}/${H}`;
+  if (W > H) { fr.style.height='auto'; fr.style.width='min(100%, 760px)'; } else { fr.style.width=''; fr.style.height=''; }
+  fr.classList.toggle('fit-blur', P.settings.fit === 'blur');
+  $('#bgc').style.display = P.settings.fit === 'blur' ? '' : 'none';
+  lastCapKey=''; drawOverlay();
+}
+
+// ------------------------------------------------------------------ reprodução no tempo editado
+function segAt(t){ for (let i=0;i<L.segments.length;i++){ const [s,e] = L.segments[i]; if (t >= s-0.01 && t < e) return i; } return -1; }
+function nextSeg(t){ return L.segments.findIndex(([s]) => s > t); }
+function srcToOut(t){ let acc=0; for (const [s,e] of L.segments){ if (t < s) return acc; if (t <= e) return acc + t - s; acc += e - s; } return acc; }
+function outToSrc(o){ let acc=0; for (const [s,e] of L.segments){ if (o <= acc + (e-s)) return s + (o-acc); acc += e - s; } const l=L.segments.at(-1); return l?l[1]:0; }
+let playing = false;
+function play(){ if (!L) return; const t = vid.currentTime; if (segAt(t) < 0){ const n = nextSeg(t); vid.currentTime = n<0 ? L.segments[0][0] : L.segments[n][0]; }
+  vid.play(); playing = true; $('#pp').textContent='❚❚'; $('#bigplay').classList.add('hidden'); }
+function pause(){ vid.pause(); playing=false; $('#pp').textContent='▶'; $('#bigplay').classList.remove('hidden'); }
+$('#pp').onclick = $('#bigplay').onclick = () => playing ? pause() : play();
+vid.addEventListener('click', () => playing ? pause() : play());
+document.addEventListener('keydown', e => { if (e.code==='Space' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName) && !$('#editor').classList.contains('hidden')) { e.preventDefault(); playing?pause():play(); }});
+$('#scrub').oninput = e => { vid.currentTime = outToSrc(e.target.value/1000 * L.duration_out); drawOverlay(); };
+function loop(){
+  if (L && playing){
+    const t = vid.currentTime, i = segAt(t);
+    if (i < 0 || t >= L.segments[i][1] - 0.03){
+      const n = i < 0 ? nextSeg(t) : i + 1;
+      if (n < 0 || n >= L.segments.length){ pause(); vid.currentTime = L.segments[0][0]; } else vid.currentTime = L.segments[n][0];
+    }
+  }
+  if (L && P) drawOverlay();
+  requestAnimationFrame(loop);
+}
+
+// ------------------------------------------------------------------ overlay
+const bgc = $('#bgc'), bgx = bgc.getContext('2d');
+let lastCapKey = '';
+function drawOverlay(){
+  if (!L || !P || $('#editor').classList.contains('hidden')) return;
+  const S = P.settings, st = style(), fr = $('#frame');
+  const [W,H] = CFG.formats[S.format] || [1080,1920];
+  const k = fr.clientHeight / H, unit = Math.min(W,H)/1080;
+  const t = vid.currentTime, i = segAt(t);
+  vid.style.transform = `scale(${i >= 0 ? L.segments[i][2] : 1})`;
+  if (S.fit === 'blur' && vid.readyState >= 2) { try { bgx.drawImage(vid, 0, 0, bgc.width, bgc.height); } catch(e){} }
+  const out = srcToOut(t);
+  $('#tm').textContent = `${fmt(out)} / ${fmt(L.duration_out)}`;
+  if (document.activeElement !== $('#scrub')) { $('#scrub').value = L.duration_out ? out / L.duration_out * 1000 : 0; rangeFill($('#scrub')); }
+  const pb = $('#pbar'); pb.style.display = S.progress_bar ? '' : 'none';
+  pb.style.width = (L.duration_out ? out / L.duration_out * 100 : 0) + '%'; pb.style.height = Math.max(3, H/160*k) + 'px';
+  let pc = S.accent || st.active; if (pc.toUpperCase()==='#FFFFFF') pc = '#FFE600'; pb.style.background = pc;
+  // faixa do topo (gancho + tópicos)
+  const ttl = $('#ttl'), top = (L.top||[]).find(([a,b]) => out >= a && out < b);
+  if (top){ ttl.style.opacity = 1; if (ttl.textContent !== top[2]) ttl.textContent = top[2];
+    ttl.style.fontSize = (66*unit*k) + 'px'; ttl.style.top = (H*(H>W?0.11:0.06)*k) + 'px'; } else ttl.style.opacity = 0;
+  // legenda
+  const cap = $('#cap');
+  if (!S.captions) { cap.innerHTML=''; lastCapKey=''; return; }
+  let page = null, pi = -1;
+  for (let j=0;j<L.pages.length;j++){
+    const ws = L.pages[j].map(id => WMAP[id]); const nx = L.pages[j+1] ? WMAP[L.pages[j+1][0]].s : 1e9;
+    if (t >= ws[0].s - 0.02 && t < Math.min(nx, ws.at(-1).e + 0.6)) { page = ws; pi = j; break; }
+  }
+  if (!page) { cap.innerHTML=''; lastCapKey=''; return; }
+  let act = -1; page.forEach((w,j) => { if (t >= w.s - 0.02) act = j; });
+  const popOn = st.pop && act >= 0 && t - page[act].s < 0.09;
+  const base = st.size * unit * (S.caption_scale||1) * k;
+  const key = [pi, act, popOn, base.toFixed(1), S.style, S.accent, S.emojis, S.caption_y, page.map(w=>w.text+w.kw+w.emoji).join()].join('|');
+  if (key === lastCapKey) return; lastCapKey = key;
+  const accentC = S.accent && st.active_mode==='color' ? S.accent : st.active;
+  const boxC = S.accent && st.active_mode==='box' ? S.accent : (st.box||'#7B2FF7');
+  const kwC = S.accent && st.active_mode==='none' ? S.accent : st.kw;
+  let emo = ''; page.forEach((w,j) => { if (w.kw && w.emoji && (j <= act || !st.pop)) emo = w.emoji; });
+  const html = page.map((w,j) => {
+    let c = st.text, extra = '';
+    const sz = base * (w.kw ? st.kw_scale : 1) * (popOn && j===act ? 1.14 : 1);
+    if (w.kw) c = kwC;
+    const isAct = j === act && st.active_mode !== 'none';
+    if (isAct && st.active_mode==='color' && !w.kw) c = accentC;
+    if (isAct && st.active_mode==='box'){ c='#fff'; extra = `background:${boxC};border-radius:${base*0.18}px;padding:0 ${base*0.16}px;`; }
+    const stroke = st.stroke ? `-webkit-text-stroke:${2*st.stroke*base/st.size}px ${st.stroke_color};paint-order:stroke fill;` : '';
+    return `<span class="w" style="font-size:${sz}px;color:${c};${stroke}${extra}">${esc(st.upper ? w.text.toUpperCase() : w.text)}</span>`;
+  }).join('');
+  cap.style.fontFamily = st.css_font; cap.style.fontWeight = st.css_weight;
+  cap.style.textShadow = st.shadow ? `0 ${base*0.06}px ${base*0.14}px rgba(0,0,0,.75)` : 'none';
+  cap.innerHTML = (S.emojis && emo ? `<span class="emo" style="font-size:${base*1.3}px">${emo}</span>` : '') + `<div>${html}</div>`;
+  const cy = (S.caption_y ?? st.y) * fr.clientHeight, textDiv = cap.lastElementChild;
+  const emoH = cap.firstElementChild !== textDiv ? cap.firstElementChild.offsetHeight : 0;
+  cap.style.top = (cy - emoH - textDiv.offsetHeight/2) + 'px';
+}
+
+// ------------------------------------------------------------------ editor de texto
+function isCut(w){ return w.removed || (P.settings.remove_fillers && w.filler); }
+function renderScript(keepScroll){
+  const box = $('#script'), sc = box.parentElement.scrollTop;
+  const topics = {}; (P.settings.topics||[]).forEach((tp,i) => topics[tp.word_id] = i);
+  let html = '<p>';
+  P.words.forEach((w, i) => {
+    const prev = P.words[i-1];
+    if (prev && w.s - prev.e > 0.7 && P.settings.cut_silence) html += `<span class="gap" title="Pausa cortada">⏸ ${(w.s-prev.e).toFixed(1)}s</span>`;
+    if (w.id in topics) html += `<span class="topic" data-tp="${topics[w.id]}" title="Clique para editar">📌 ${esc(P.settings.topics[topics[w.id]].text)}<button data-del="${topics[w.id]}" title="Remover tópico">✕</button></span>`;
+    const cls = ['wd', w.kw && 'kw', w.removed && 'rm', (!w.removed && w.filler) && 'fl', sel && i>=sel.a && i<=sel.b && 'sel'].filter(Boolean).join(' ');
+    html += `<span class="${cls}" data-i="${i}">${esc(w.text)}${w.kw && w.emoji && P.settings.emojis ? `<sup>${w.emoji}</sup>` : ''}</span> `;
+    if (/[.!?…]$/.test(w.text)) html += '</p><p>';
+  });
+  box.innerHTML = html + '</p>';
+  if (keepScroll) box.parentElement.scrollTop = sc;
+}
+let dragA = null;
+$('#script').addEventListener('mousedown', e => {
+  const del = e.target.closest('[data-del]'); if (del){ e.preventDefault(); P.settings.topics.splice(+del.dataset.del,1); queueSave(10); renderScript(true); return; }
+  const tp = e.target.closest('.topic'); if (tp){ e.preventDefault(); const t = P.settings.topics[+tp.dataset.tp]; const v = prompt('Título do tópico:', t.text); if (v!==null){ if (v.trim()) t.text = v.trim(); else P.settings.topics.splice(+tp.dataset.tp,1); queueSave(10); renderScript(true);} return; }
+  const el = e.target.closest('.wd'); if (!el) return; e.preventDefault();
+  const i = +el.dataset.i;
+  if (e.shiftKey && sel) { sel = {a: Math.min(sel.a, i), b: Math.max(sel.b, i)}; dragA = sel.a === i ? sel.b : sel.a; } else { sel = {a:i, b:i}; dragA = i; }
+  vid.currentTime = Math.max(0, P.words[sel.a].s - 0.02); lastCapKey=''; drawOverlay(); markSel();
+});
+$('#script').addEventListener('mouseover', e => { if (dragA === null) return; const el = e.target.closest('.wd'); if (!el) return;
+  const i = +el.dataset.i; sel = {a: Math.min(dragA,i), b: Math.max(dragA,i)}; markSel(); });
+document.addEventListener('mouseup', () => { if (dragA !== null) { dragA = null; showPopover(); } });
+document.addEventListener('mousedown', e => { if (!e.target.closest('#popover') && !e.target.closest('#script')) { sel=null; markSel(); $('#popover').classList.add('hidden'); } });
+function markSel(){ $$('#script .wd').forEach(el => { const i=+el.dataset.i; el.classList.toggle('sel', !!sel && i>=sel.a && i<=sel.b); }); }
+function showPopover(){
+  if (!sel) return; const el = $(`#script .wd[data-i="${sel.b}"]`); if (!el) return;
+  const r = el.getBoundingClientRect(), pop = $('#popover'), ws = P.words.slice(sel.a, sel.b+1), one = sel.a===sel.b;
+  pop.querySelector('[data-a=kw]').textContent = ws.every(w=>w.kw) ? 'Tirar destaque' : 'Destacar';
+  pop.querySelector('[data-a=cut]').textContent = ws.every(isCut) ? 'Restaurar' : 'Cortar';
+  for (const a of ['edit','emoji']) pop.querySelector(`[data-a=${a}]`).classList.toggle('hidden', !one);
+  pop.classList.remove('hidden');
+  pop.style.left = Math.min(innerWidth - pop.offsetWidth - 10, Math.max(10, r.left)) + 'px';
+  pop.style.top = (r.bottom + 8 + pop.offsetHeight > innerHeight ? r.top - pop.offsetHeight - 8 : r.bottom + 8) + 'px';
+}
+$('#popover').addEventListener('click', e => {
+  const a = e.target.closest('button')?.dataset.a; if (!a || !sel) return;
+  const ws = P.words.slice(sel.a, sel.b+1);
+  if (a === 'kw'){ const v = !ws.every(w=>w.kw); ws.forEach(w => { w.kw = v; touchWord(w); }); }
+  if (a === 'cut'){ const restore = ws.every(isCut); ws.forEach(w => { w.removed = !restore; if (restore) w.filler = false; touchWord(w); }); toast(restore ? 'Trecho restaurado' : `✂️ ${ws.length} palavra(s) cortada(s)`); }
+  if (a === 'edit'){ const w = ws[0]; const v = prompt('Corrigir palavra:', w.text); if (v && v.trim()) { w.text = v.trim(); touchWord(w); } }
+  if (a === 'emoji'){ const w = ws[0]; const v = prompt('Emoji para esta palavra (vazio remove):', w.emoji || ''); if (v !== null) { w.emoji = v.trim(); w.kw = !!w.emoji || w.kw; touchWord(w); } }
+  if (a === 'topic'){ const v = prompt('Título do tópico que começa aqui:', ''); if (v && v.trim()) { P.settings.topics = (P.settings.topics||[]).filter(t => t.word_id !== ws[0].id); P.settings.topics.push({word_id: ws[0].id, text: v.trim()}); P.settings.topics.sort((x,y)=>x.word_id-y.word_id); } }
+  sel = null; $('#popover').classList.add('hidden'); renderScript(true); lastCapKey=''; queueSave(50);
+});
+$$('#tabs button').forEach(b => b.onclick = () => { $$('#tabs button').forEach(x => x.classList.toggle('on', x===b));
+  $$('.pane').forEach(p => p.classList.toggle('hidden', p.dataset.p !== b.dataset.t)); $('#popover').classList.add('hidden'); });
+
+// ------------------------------------------------------------------ IA (Claude Code / Codex)
+let aiProv = 'auto';
+function aiView(v){ for (const x of ['aiForm','aiNone','aiRun','aiDone']) $('#'+x).classList.toggle('hidden', x!==v); }
+$('#aiBtn').onclick = async () => {
+  pause(); SETUP = await api('/api/setup'); const l = SETUP.llm; $('#aiSheet').classList.remove('hidden');
+  if (!l.claude && !l.codex) return aiView('aiNone');
+  aiView('aiForm');
+  const opts = [l.claude && ['claude','Claude Code'], l.codex && ['codex','Codex']].filter(Boolean);
+  if (aiProv === 'auto' || !opts.find(o=>o[0]===aiProv)) aiProv = (P.settings.llm && opts.find(o=>o[0]===P.settings.llm)) ? P.settings.llm : opts[0][0];
+  $('#aiProv').innerHTML = opts.map(([k,n]) => `<button data-v="${k}" class="${k===aiProv?'on':''}">${n}</button>`).join('');
+  $('#aiProv').classList.toggle('hidden', opts.length < 2);
+  $('#aiProv').querySelectorAll('button').forEach(b => b.onclick = () => { aiProv = b.dataset.v; $('#aiProv').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); setLead(); });
+  const setLead = () => $('#aiLead').textContent = `Usando o ${opts.find(o=>o[0]===aiProv)[1]} da sua conta. A IA lê a transcrição e edita como um profissional.`; setLead();
+};
+$$('[data-close]').forEach(b => b.onclick = () => b.closest('.backdrop').classList.add('hidden'));
+$('#aiGo').onclick = async () => {
+  const tasks = $$('[data-ai]').filter(i => i.checked).map(i => i.dataset.ai);
+  if (!tasks.length) return toast('Escolha pelo menos uma opção');
+  clearTimeout(saveT); await put({settings: P.settings, words: Object.values(pendingWords)}).catch(()=>{}); pendingWords = {};
+  aiView('aiRun'); $('#aiRunT').textContent = 'Lendo seu vídeo…';
+  try { await api(`/api/jobs/${JOB}/ai`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({tasks, provider: aiProv})}); }
+  catch(e){ aiView('aiForm'); return toast(e.message); }
+  const msgs = ['Lendo seu vídeo…','Escolhendo os destaques…','Procurando repetições…','Criando títulos…'];
+  let n = 0; const mt = setInterval(() => $('#aiRunT').textContent = msgs[++n % msgs.length], 3500);
+  const tick = async () => {
+    const s = await (await fetch('/api/jobs/' + JOB)).json(); const ai = s.ai || {};
+    if (ai.state === 'running') return setTimeout(tick, 1000);
+    clearInterval(mt);
+    if (ai.state === 'error') { aiView('aiForm'); return alert(ai.error); }
+    P = s.project; L = s.layout; WMAP = {}; P.words.forEach(w => WMAP[w.id] = w);
+    renderScript(); syncControls(); updateStats(); lastCapKey='';
+    const sm = ai.summary || {};
+    $('#aiDoneLead').textContent = `Feito pelo ${sm.provider || 'assistente'}. Tudo continua editável.`;
+    const rows = [['🔥','Destaques',sm.kw],['😀','Emojis',sm.emoji],['✂️','Trechos cortados (palavras)',sm.cut],['📌','Títulos de tópico',sm.topics],['✏️','Correções',sm.fix]].filter(r => r[2] !== undefined);
+    $('#aiSum').innerHTML = rows.map(([i,t,v]) => `<div class="row"><span class="t">${i}&nbsp; ${t}</span><b>${v}</b></div>`).join('');
+    const hooks = sm.hooks || [];
+    $('#aiHooksW').classList.toggle('hidden', !hooks.length);
+    $('#aiHooks').innerHTML = hooks.map(h => `<button>${esc(h)}</button>`).join('');
+    $$('#aiHooks button').forEach(b => b.onclick = () => { set({title: b.textContent}); syncControls(); $$('#aiHooks button').forEach(x => x.style.borderColor = x===b ? 'var(--primary)' : ''); toast('Gancho aplicado'); });
+    aiView('aiDone');
+  };
+  tick();
+};
+
+// ------------------------------------------------------------------ exportar
+$('#exportBtn').onclick = () => exportVideo(false);
+async function exportVideo(already){
+  pause(); clearTimeout(saveT);
+  if (!already){ await put({settings:P.settings, words:Object.values(pendingWords)}); pendingWords = {}; await api(`/api/jobs/${JOB}/render`, {method:'POST'}); }
+  $('#exSheet').classList.remove('hidden'); $('#mVid').classList.add('hidden'); $('#mActs').classList.add('hidden'); $('#mBarWrap').classList.remove('hidden'); $('#mDl').classList.remove('hidden');
+  $('#mTitle').textContent = 'Exportando…'; $('#mSub').textContent = 'Aplicando cortes, legendas e efeitos.';
+  const tick = async () => {
+    const s = await (await fetch('/api/jobs/' + JOB)).json(); const r = s.render || {};
+    if (r.state === 'error'){ $('#mTitle').textContent = 'Algo deu errado'; $('#mSub').textContent = r.message; $('#mActs').classList.remove('hidden'); $('#mDl').classList.add('hidden'); return; }
+    if (r.state === 'done'){
+      $('#mTitle').textContent = 'Seu vídeo está pronto 🎉'; $('#mSub').textContent = `${fmt(L.duration_out)} · ${P.settings.format} · MP4 em alta qualidade`;
+      $('#mBarWrap').classList.add('hidden'); const mv = $('#mVid'); mv.src = `/api/jobs/${JOB}/final?v=${r.version}`; mv.classList.remove('hidden');
+      $('#mDl').href = `/api/jobs/${JOB}/final?download=1&v=${r.version}`; $('#mActs').classList.remove('hidden'); return;
+    }
+    $('#mBar').style.width = ((r.progress||0)*100) + '%'; $('#mSub').textContent = (r.message || 'Processando') + ` · ${Math.round((r.progress||0)*100)}%`;
+    setTimeout(tick, 500);
+  };
+  tick();
+}
+$('#mClose').onclick = () => { $('#exSheet').classList.add('hidden'); $('#mVid').pause(); };
+
+// ------------------------------------------------------------------ roteamento
+function route(){
+  const h = location.hash.slice(1);
+  if (/^[a-f0-9]{12}$/.test(h)) { if (h !== JOB) { JOB = h; show('processing'); poll(); } }
+  else if (!$('#setup').classList.contains('hidden')) {}
+  else goHome();
+}
+(async () => {
+  CFG = await api('/api/config');
+  requestAnimationFrame(loop);
+  new ResizeObserver(() => { lastCapKey=''; drawOverlay(); }).observe($('#frame'));
+  SETUP = await api('/api/setup');
+  addEventListener('hashchange', route);
+  if (!SETUP.model.ready || !SETUP.ffmpeg) return runSetup();
+  route();
+})();
+</script>
+</body>
+</html>

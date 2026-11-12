@@ -1,0 +1,21 @@
+[project]
+name = "cortefacil"
+version = "1.0.0"
+description = "Editor automático de vídeos para Reels/TikTok: legendas, cortes de silêncio e destaques com IA."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "python-multipart>=0.0.9",
+    "pillow>=10.3",
+    "numpy>=1.26",
+    "imageio-ffmpeg>=0.6",
+    "huggingface-hub>=0.23",
+    "faster-whisper>=1.1; sys_platform != 'darwin' or platform_machine != 'arm64'",
+    "mlx-whisper>=0.4; sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+
+[tool.uv]
+package = false
