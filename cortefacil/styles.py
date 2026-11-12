@@ -127,6 +127,7 @@ DEFAULT_SETTINGS = {
     "music": None,
     "music_volume": 0.12,
     "enhance": True,        # leve correção de cor + nitidez
+    "sfx": "sutil",         # efeitos sonoros nos cortes: off | sutil | marcante
 }
 
 

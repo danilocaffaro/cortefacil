@@ -34,7 +34,10 @@ def load() -> dict:
 
 
 def save(cfg: dict) -> None:
-    CONFIG.write_text(json.dumps(cfg, ensure_ascii=False))
+    # criado já com permissão 600 (só o seu usuário lê a chave)
+    fd = os.open(CONFIG, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as fh:
+        fh.write(json.dumps(cfg, ensure_ascii=False))
     try:
         os.chmod(CONFIG, 0o600)
     except OSError:

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import shutil
@@ -11,22 +12,61 @@ import uuid
 from pathlib import Path
 
 import uvicorn
-from fastapi import Body, FastAPI, File, HTTPException, UploadFile
-from fastapi.responses import FileResponse, JSONResponse
+from urllib.parse import urlsplit
+
+from fastapi import Body, FastAPI, File, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, JSONResponse, Response
 
 import cloud_stt
 import engine
 import llm
 import setup_check
+import sfx
+import validate
 from styles import ANIMS, DEFAULT_SETTINGS, FONTS, FORMATS, STYLES
 
 ROOT = Path(__file__).parent
 JOBS = Path(os.environ.get("CORTEFACIL_DATA", ROOT.parent / "projetos"))
 JOBS.mkdir(parents=True, exist_ok=True)
+try:
+    os.chmod(JOBS, 0o700)  # vídeos só para o seu usuário
+except OSError:
+    pass
 VERSION = (ROOT.parent / "VERSION").read_text().strip() if (ROOT.parent / "VERSION").exists() else "dev"
 SAMPLE = ROOT.parent / "samples" / "exemplo.mp4"
 app = FastAPI(title="CorteFácil")
 STATUS: dict[str, dict] = {}
+LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
+MAX_VIDEO = 8 * 1024 ** 3     # 8 GB
+MAX_MUSIC = 200 * 1024 ** 2   # 200 MB
+
+
+@app.middleware("http")
+async def only_local(request: Request, call_next):
+    """O app só atende ele mesmo: bloqueia sites abertos no navegador que tentem usar a API local
+    (DNS rebinding pelo Host; CSRF pelo Origin/Sec-Fetch-Site)."""
+    host = (urlsplit("//" + (request.headers.get("host") or "")).hostname or "").lower()
+    if host not in LOCAL_HOSTS:
+        return JSONResponse({"detail": "Acesso permitido só pelo próprio computador."}, status_code=403)
+    if request.method not in ("GET", "HEAD", "OPTIONS"):
+        origin = request.headers.get("origin")
+        if origin and (urlsplit(origin).hostname or "").lower() not in LOCAL_HOSTS:
+            return JSONResponse({"detail": "Origem não permitida."}, status_code=403)
+        if request.headers.get("sec-fetch-site") in ("cross-site", "same-site"):
+            return JSONResponse({"detail": "Origem não permitida."}, status_code=403)
+    return await call_next(request)
+
+
+def _save_upload(src, dest: Path, limit: int) -> None:
+    total = 0
+    with open(dest, "wb") as fh:
+        while chunk := src.read(4 * 1024 * 1024):
+            total += len(chunk)
+            if total > limit:
+                fh.close()
+                dest.unlink(missing_ok=True)
+                raise HTTPException(413, f"Arquivo grande demais (máximo {limit // 1024 ** 2} MB).")
+            fh.write(chunk)
 GPU_LOCK = threading.Lock()
 
 
@@ -160,6 +200,13 @@ def _new_job(name: str) -> tuple[str, Path]:
     return jid, d
 
 
+@app.get("/sfx/{kind}.wav")
+def sfx_sound(kind: str):
+    if kind not in sfx.SOUNDS:
+        raise HTTPException(404)
+    return Response(sfx.wav_bytes(kind), media_type="audio/wav", headers={"Cache-Control": "max-age=86400"})
+
+
 @app.post("/api/sample")
 def sample():
     if not SAMPLE.exists():
@@ -223,8 +270,12 @@ async def upload(file: UploadFile = File(...)):
     if ext not in {".mp4", ".mov", ".m4v", ".webm", ".mkv", ".avi"}:
         raise HTTPException(400, "Formato não suportado. Use MP4, MOV, WEBM ou MKV.")
     jid, d = _new_job(Path(file.filename or "video").stem)
-    with open(d / f"source{ext}", "wb") as fh:
-        shutil.copyfileobj(file.file, fh, length=4 * 1024 * 1024)
+    try:
+        _save_upload(file.file, d / f"source{ext}", MAX_VIDEO)
+    except HTTPException:
+        shutil.rmtree(d, ignore_errors=True)
+        STATUS.pop(jid, None)
+        raise
     threading.Thread(target=_analyze, args=(jid,), daemon=True).start()
     return {"id": jid}
 
@@ -233,11 +284,12 @@ async def upload(file: UploadFile = File(...)):
 def job(jid: str):
     d = job_dir(jid)
     st = dict(STATUS.get(jid) or {})
-    if not st:  # servidor reiniciado: recupera do disco
-        st = {"state": "ready" if (d / "project.json").exists() else "error",
-              "error": "Análise interrompida. Envie o vídeo novamente."}
+    if not st.get("state"):  # servidor reiniciado: recupera do disco
+        rec = {"state": "ready" if (d / "project.json").exists() else "error",
+               "error": "Análise interrompida. Envie o vídeo novamente."}
         if (d / "final.mp4").exists():
-            st["render"] = {"state": "done", "progress": 1, "version": "0"}
+            rec["render"] = {"state": "done", "progress": 1, "version": "0"}
+        st = {**rec, **st}
         STATUS[jid] = st
     if st.get("state") == "ready":
         project = load(jid)
@@ -253,17 +305,14 @@ def job(jid: str):
 def update(jid: str, body: dict = Body(...)):
     project = load(jid)
     if "settings" in body:
-        allowed = set(DEFAULT_SETTINGS)
-        project["settings"].update({k: v for k, v in body["settings"].items() if k in allowed})
+        project["settings"].update(validate.settings(body["settings"]))
     if "words" in body:
         by_id = {w["id"]: w for w in project["words"]}
-        for w in body["words"]:
-            cur = by_id.get(w.get("id"))
+        for w in body["words"] if isinstance(body["words"], list) else []:
+            cur = by_id.get(w.get("id")) if isinstance(w, dict) else None
             if not cur:
                 continue
-            for k in ("text", "kw", "removed", "emoji"):
-                if k in w:
-                    cur[k] = w[k]
+            cur.update(validate.word(w))
     save(jid, project)
     return engine.layout(project)
 
@@ -277,8 +326,7 @@ async def music(jid: str, file: UploadFile = File(...)):
     for old in d.glob("music.*"):
         old.unlink()
     name = f"music{ext}"
-    with open(d / name, "wb") as fh:
-        shutil.copyfileobj(file.file, fh)
+    _save_upload(file.file, d / name, MAX_MUSIC)
     project = load(jid)
     project["settings"]["music"] = name
     save(jid, project)
@@ -299,10 +347,15 @@ def start_render(jid: str):
 @app.get("/api/jobs/{jid}/thumb")
 def thumb(jid: str, t: float = 0.0):
     d = job_dir(jid)
+    if not math.isfinite(t):
+        raise HTTPException(400)
+    t = max(0.0, min(t, float(load(jid)["meta"].get("duration") or 0) - 0.2))
     f = d / f"thumb_{int(t * 10)}.jpg"
     if not f.exists():
         engine.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{max(0.0, t):.2f}", "-i", str(d / "proxy.mp4"),
                     "-frames:v", "1", "-q:v", "3", str(f)])
+    if not f.exists():
+        raise HTTPException(404)
     return FileResponse(f, media_type="image/jpeg")
 
 

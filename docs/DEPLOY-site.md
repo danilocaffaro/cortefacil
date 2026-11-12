@@ -1,30 +1,9 @@
 # Deploy da home page (cortefacil.melhor.dev)
 
-Página estática em `site/`, servida pelo Caddy da VM Oracle (`caffaroos-oracle`) através do túnel Cloudflare `multi-agent-ui`.
+A página é estática (pasta `site/`, sem build). Qualquer servidor de arquivos serve: basta publicar o conteúdo de `site/` na raiz do domínio.
 
-| Item | Valor |
-|---|---|
-| URL | https://cortefacil.melhor.dev |
-| Releases | `/opt/cortefacil-site/releases/<commit>` (o atual fica em `current`, um symlink) |
-| Caddy | `/etc/caddy/cortefacil.caddy`, importado no bloco `:80` logo após `resumeai.caddy` |
-| Backup do Caddyfile | `/etc/caddy/Caddyfile.before-cortefacil-20261112T002859Z` |
-| DNS | CNAME proxied `cortefacil` → `3fb6bfa3-1c2b-47b5-99fb-1e203cd7e766.cfargotunnel.com` |
+- **Versões imutáveis:** cada publicação vai para uma pasta própria (`releases/<commit>`), e um link `current` aponta para a versão no ar. Para voltar, aponte `current` para a pasta anterior.
+- **Cache:** as imagens em `/img/*` ficam 1 dia em cache. Ao trocar uma imagem, mude a URL (por exemplo `?v=4`).
+- **Cabeçalhos de segurança recomendados:** `Strict-Transport-Security`, `Content-Security-Policy` (sem scripts inline: o site usa `theme.js` e `site.js`), `X-Frame-Options: DENY`, `Permissions-Policy` e `X-Content-Type-Options: nosniff`.
 
-## Publicar uma nova versão
-
-```bash
-REL=$(git rev-parse --short HEAD)
-ssh oracle "mkdir -p /opt/cortefacil-site/releases/$REL"
-rsync -a --delete site/ oracle:/opt/cortefacil-site/releases/$REL/
-ssh oracle "ln -sfn /opt/cortefacil-site/releases/$REL /opt/cortefacil-site/current"
-```
-
-As imagens em `/img/*` ficam 1 dia no cache. Ao trocar uma imagem, mude a URL (por exemplo `?v=3`).
-
-## Voltar para a versão anterior
-
-```bash
-ssh oracle "ln -sfn /opt/cortefacil-site/releases/<commit-anterior> /opt/cortefacil-site/current"
-```
-
-Para remover a rota, apague a linha `import /etc/caddy/cortefacil.caddy` e o próprio fragmento, rode `sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile` e depois `sudo systemctl reload caddy`.
+Os detalhes da infraestrutura do mantenedor (servidor, túnel e DNS) ficam fora do repositório público.

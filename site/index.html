@@ -9,7 +9,7 @@
 <meta property="og:description" content="Solte a gravação crua. Saia com o Reel editado: legendas, cortes, destaques e zoom. Grátis e local.">
 <meta property="og:image" content="https://cortefacil.melhor.dev/img/app.jpg?v=3">
 <link rel="icon" href="img/favicon.png">
-<script>try{if(localStorage.getItem('cf_site_theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+<script src="theme.js"></script>
 <style>
 /* Tokens: Apple DESIGN.md (VoltAgent/awesome-design-md, MIT). Claro por padrão; escuro opcional. */
 :root{
@@ -77,7 +77,7 @@ h2.display{font:600 40px/1.1 var(--font-d);letter-spacing:0;margin:0 0 12px}
 .lead{font:400 28px/1.14 var(--font-d);letter-spacing:.196px;margin:0 auto 28px;max-width:760px}
 .sub{color:var(--t-light2)} .on-dark .sub{color:var(--body-muted)}
 .ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.product{margin:56px auto 0;border-radius:18px;box-shadow:var(--product-shadow);width:100%;max-width:1040px}
+.product{height:auto;margin:56px auto 0;border-radius:18px;box-shadow:var(--product-shadow);width:100%;max-width:1040px}
 
 /* antes/depois em celulares */
 .phones{display:flex;gap:22px;justify-content:center;margin-top:52px;flex-wrap:wrap}
@@ -168,6 +168,53 @@ footer a{color:var(--t-light2);text-decoration:underline}
   .grid{grid-template-columns:1fr}.phone{width:150px;border-radius:20px}.phones{gap:12px}
 }
 @media (max-width:419px){.hero h1{font-size:28px}.phone{width:130px}}
+/* celular */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.menu-btn{display:none;width:44px;height:44px;margin-right:-10px;border:0;background:none;cursor:pointer;position:relative;color:var(--t-light)}
+.menu-btn span{position:absolute;left:14px;width:16px;height:1.5px;background:currentColor;border-radius:1px;transition:transform .25s}
+.menu-btn span:first-child{top:18px}.menu-btn span:last-child{top:25px}
+.menu-btn[aria-expanded=true] span:first-child{transform:translateY(3.5px) rotate(45deg)}
+.menu-btn[aria-expanded=true] span:last-child{transform:translateY(-3.5px) rotate(-45deg)}
+.mnav{display:none}
+.mobile-note{display:none}
+@media (max-width:834px){
+  .menu-btn{display:block}
+  .subnav .wide{gap:12px}
+  .mnav.open{display:block;position:absolute;left:0;right:0;top:52px;background:var(--s-light);border-bottom:1px solid var(--card-line);padding:8px 0 16px;box-shadow:0 12px 24px rgba(0,0,0,.08)}
+  .mnav a{display:block;padding:13px 22px;font:600 21px/1.2 var(--font-d);color:var(--t-light)}
+  .mnav a:hover{text-decoration:none}
+  .tile{scroll-margin-top:52px}
+}
+@media (max-width:640px){
+  .wrap,.wide{padding:0 16px}
+  .gnav .wide{gap:14px}
+  .btn{min-height:44px}
+  .btn.sm{min-height:34px;font-size:14px;padding:6px 14px}
+  .ctas{flex-direction:column;align-items:center;gap:12px}
+  .ctas .btn{width:100%;max-width:300px}
+  .eyebrow{font-size:17px}
+  .lead{font-size:19px;line-height:1.26}
+  .split .lead{font-size:19px}
+  .hero .product{max-width:300px;margin-top:40px;border-radius:22px}
+  #estilo .product{max-width:320px;margin-top:40px}
+  .product,.shot{border-radius:14px}
+  .phones{padding:0 16px}
+  .pills span{font-size:13px;padding:7px 12px}
+  .card{padding:20px}
+  .split{gap:36px}
+  .ai-list li{font-size:16px}
+  .opt{padding:16px}
+  .seg button{padding:10px 16px}
+  .step{gap:12px}
+  .cmd{flex-direction:column;align-items:stretch}
+  .cmd code{white-space:normal;word-break:break-all;overflow:visible}
+  .cmd button{min-height:40px}
+  .mobile-note{display:flex;gap:14px;text-align:left;background:var(--s-alt);border-radius:18px;padding:18px;margin:8px 0 6px;font-size:15px;line-height:1.4}
+  .mobile-note>.i{width:28px;height:28px;margin-top:2px;color:var(--primary)}
+  .mobile-note .btn{margin-top:12px}
+  .faq summary{font-size:16px;padding:4px 0}
+  footer .wide{flex-direction:column;gap:8px}
+}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
@@ -196,7 +243,9 @@ footer a{color:var(--t-light2);text-decoration:underline}
     <span class="sp"></span>
     <span class="links"><a href="#como">Como funciona</a><a href="#recursos">Recursos</a><a href="#estilo">Estilos</a><a href="#nuvem">Transcrição</a><a href="#duvidas">Dúvidas</a></span>
     <a class="btn primary sm" href="#instalar">Baixar grátis</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="mnav"><span></span><span></span></button>
   </div>
+  <nav class="mnav" id="mnav" aria-label="Seções"><a href="#como">Como funciona</a><a href="#recursos">Recursos</a><a href="#estilo">Estilos</a><a href="#ia">IA</a><a href="#nuvem">Transcrição</a><a href="#instalar">Instalar</a><a href="#duvidas">Dúvidas</a></nav>
 </div>
 
 <!-- hero (claro) -->
@@ -210,7 +259,7 @@ footer a{color:var(--t-light2);text-decoration:underline}
       <a class="btn ghost" href="#como">Veja como funciona ›</a>
     </div>
   </div>
-  <div class="wide"><img class="product" src="img/app.jpg?v=3" width="1800" height="1125" alt="Editor do CorteFácil com o estilo Nativo: título de tópico no topo, legenda discreta e o painel de estilos"></div>
+  <div class="wide"><picture><source media="(max-width:640px)" srcset="img/app-m.jpg?v=4" width="510" height="890"><img class="product" src="img/app.jpg?v=3" width="1800" height="1125" alt="Editor do CorteFácil com o estilo Nativo: título de tópico no topo, legenda discreta e o painel de estilos"></picture></div>
 </section>
 
 <!-- como funciona (escuro) -->
@@ -242,7 +291,7 @@ footer a{color:var(--t-light2);text-decoration:underline}
       <div class="card"><div class="ic"><svg class="i" aria-hidden="true"><use href="#i-pin_fill"/></svg></div><h3>Títulos e gancho</h3><p>Um gancho forte na abertura e um título no topo a cada novo assunto.</p></div>
       <div class="card"><div class="ic"><svg class="i" aria-hidden="true"><use href="#i-zoom_in"/></svg></div><h3>Zoom e câmera viva</h3><p>Enquadramento muda a cada corte ou tópico, com uma aproximação lenta que deixa o vídeo vivo.</p></div>
       <div class="card"><div class="ic"><svg class="i" aria-hidden="true"><use href="#i-textformat"/></svg></div><h3>Personalize tudo</h3><p>Fonte, cores, contorno, animação e posição — arraste a legenda direto no vídeo.</p></div>
-      <div class="card"><div class="ic"><svg class="i" aria-hidden="true"><use href="#i-speaker_3_fill"/></svg></div><h3>Som de profissional</h3><p>Volume no padrão das redes e música de fundo que abaixa sozinha quando você fala.</p></div>
+      <div class="card"><div class="ic"><svg class="i" aria-hidden="true"><use href="#i-speaker_3_fill"/></svg></div><h3>Som de profissional</h3><p>Efeitos sonoros nos cortes e títulos, volume no padrão das redes e música que abaixa sozinha quando você fala.</p></div>
     </div>
   </div>
 </section>
@@ -257,7 +306,7 @@ footer a{color:var(--t-light2);text-decoration:underline}
       <span>12 fontes</span><span>4 cores</span><span>Contorno e sombra</span><span>Palavras por vez</span><span>4 animações</span><span>Arrastar no vídeo</span><span>Áreas seguras do Instagram</span><span>Meus estilos</span>
     </div>
   </div>
-  <div class="wide"><img class="product" src="img/app-personalizar.jpg?v=3" width="1600" height="1000" alt="Painel Personalizar do CorteFácil com cores, contorno, tamanho, palavras por vez e animação" loading="lazy"></div>
+  <div class="wide"><picture><source media="(max-width:640px)" srcset="img/app-personalizar-m.jpg?v=4" width="440" height="940"><img class="product" src="img/app-personalizar.jpg?v=3" width="1600" height="1000" alt="Painel Personalizar do CorteFácil com cores, contorno, tamanho, palavras por vez e animação" loading="lazy"></picture></div>
 </section>
 
 <!-- IA (escuro) -->
@@ -302,6 +351,7 @@ footer a{color:var(--t-light2);text-decoration:underline}
     <p class="eyebrow">Grátis · Código aberto</p>
     <h2 class="display">Instale em 2 minutos.</h2>
     <p class="lead sub">Um comando, e pronto. Sem cadastro, sem senha de administrador.</p>
+    <div class="mobile-note"><svg class="i" aria-hidden="true"><use href="#i-desktopcomputer"/></svg><div><b>O CorteFácil roda no computador.</b><br>Mande este link para você e instale no Mac ou no PC.<br><button class="btn primary sm" id="shareBtn">Enviar link para mim</button></div></div>
     <div class="seg" role="tablist">
       <button role="tab" data-os="mac" class="on">Mac</button>
       <button role="tab" data-os="win">Windows</button>
@@ -343,43 +393,6 @@ footer a{color:var(--t-light2);text-decoration:underline}
   </div>
 </footer>
 
-<script>
-const RAW = 'https://raw.githubusercontent.com/danilocaffaro/cortefacil/main/install';
-const OS = {
-  mac: { steps: [
-      ['Abra o Terminal', 'Aperte <kbd>⌘</kbd> + <kbd>Espaço</kbd>, digite <b>Terminal</b> e aperte <kbd>Enter</kbd>.'],
-      ['Cole este comando e aperte Enter', '', `curl -fsSL ${RAW}/install.sh | bash`],
-      ['Pronto', 'O CorteFácil abre sozinho. Na primeira vez, escolha transcrever na nuvem (grátis) ou no computador. Depois, é só usar o ícone na Mesa ou em Aplicativos.']],
-    req: ['macOS 12 ou mais novo', 'Qualquer Mac com a nuvem', '~2 GB livres'] },
-  win: { steps: [
-      ['Abra o PowerShell', 'Aperte a tecla <kbd>Windows</kbd>, digite <b>PowerShell</b> e aperte <kbd>Enter</kbd>.'],
-      ['Cole este comando e aperte Enter', '', `irm ${RAW}/install.ps1 | iex`],
-      ['Pronto', 'O CorteFácil abre sozinho. Na primeira vez, escolha transcrever na nuvem (grátis) ou no computador. Depois, é só usar o ícone na Área de Trabalho.']],
-    req: ['Windows 10 ou 11', 'Qualquer PC atual com a nuvem', '~2 GB livres'] },
-  linux: { steps: [
-      ['Abra o terminal', 'Use o atalho do seu sistema, normalmente <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>.'],
-      ['Cole este comando e aperte Enter', '', `curl -fsSL ${RAW}/install.sh | bash`],
-      ['Pronto', 'O CorteFácil abre no navegador e aparece no menu de aplicativos.']],
-    req: ['Ubuntu, Fedora e afins', 'Qualquer PC atual com a nuvem', '~2 GB livres'] },
-};
-function render(os){
-  document.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.os === os));
-  document.getElementById('steps').innerHTML = OS[os].steps.map(([t, d, cmd], i) =>
-    `<div class="step"><span class="n">${i+1}</span><div style="flex:1;min-width:0"><p><b>${t}</b></p>${d?`<small>${d}</small>`:''}${cmd?`<div class="cmd"><code id="c${i}">${cmd}</code><button data-copy="c${i}">Copiar</button></div>`:''}</div></div>`).join('');
-  document.getElementById('req').innerHTML = OS[os].req.map(r => `<span>${r}</span>`).join('');
-}
-document.addEventListener('click', e => {
-  const b = e.target.closest('[data-copy]'); if (!b) return;
-  const txt = document.getElementById(b.dataset.copy).textContent;
-  navigator.clipboard.writeText(txt).then(() => { b.textContent = 'Copiado ✓'; setTimeout(() => b.textContent = 'Copiar', 1800); });
-});
-document.querySelectorAll('.seg button').forEach(b => b.onclick = () => render(b.dataset.os));
-const ua = navigator.userAgent; render(/Windows/i.test(ua) ? 'win' : /Linux/i.test(ua) && !/Android/i.test(ua) ? 'linux' : 'mac');
-const tb = document.getElementById('theme');
-const sync = () => tb.innerHTML = document.documentElement.dataset.theme === 'dark' ? '<svg class="i" aria-hidden="true"><use href="#i-sun_max_fill"/></svg>' : '<svg class="i" aria-hidden="true"><use href="#i-moon_fill"/></svg>';
-tb.onclick = () => { const d = document.documentElement; d.dataset.theme === 'dark' ? delete d.dataset.theme : d.dataset.theme = 'dark';
-  try { localStorage.setItem('cf_site_theme', d.dataset.theme || 'light'); } catch(e){} sync(); };
-sync();
-</script>
+<script src="site.js?v=4"></script>
 </body>
 </html>

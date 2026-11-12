@@ -4,6 +4,9 @@
 #   curl -fsSL https://raw.githubusercontent.com/danilocaffaro/cortefacil/main/install/install.sh | bash
 set -euo pipefail
 
+# tudo dentro de main(): se o download do script cair no meio, nada roda pela metade
+main() {
+
 REPO="danilocaffaro/cortefacil"
 BRANCH="main"
 DEST="${CORTEFACIL_HOME:-$HOME/CorteFacil}"
@@ -57,7 +60,7 @@ ok "uv pronto"
 
 # ---------------------------------------------------------------- 3. dependências
 b "3/4  Instalando componentes (pode levar alguns minutos na primeira vez)"
-"$UV" sync --quiet || fail "Falha ao instalar os componentes. Rode de novo; se persistir, abra uma issue no GitHub."
+"$UV" sync --frozen --quiet || fail "Falha ao instalar os componentes. Rode de novo; se persistir, abra uma issue no GitHub."
 ok "Componentes instalados"
 # guarda o PATH do Terminal: assim o app encontra o Claude Code / Codex mesmo aberto pelo ícone
 printf "%s" "$PATH" > "$DEST/.path"
@@ -73,7 +76,10 @@ if [ "$OS" = "Darwin" ]; then
   APPDIR="$HOME/Applications"; mkdir -p "$APPDIR"
   APP="$APPDIR/$APP_NAME.app"
   rm -rf "$APP"
-  osacompile -o "$APP" -e "do shell script \"cd \" & quoted form of \"$DEST\" & \" && nohup \" & quoted form of \"$PY\" & \" cortefacil/launcher.py --background >/dev/null 2>&1 &\"" >/dev/null
+  # escapa \ e " para o texto do AppleScript (pastas com aspas não quebram o atalho)
+  local AS_DEST="${DEST//\\/\\\\}"; AS_DEST="${AS_DEST//\"/\\\"}"
+  local AS_PY="${PY//\\/\\\\}"; AS_PY="${AS_PY//\"/\\\"}"
+  osacompile -o "$APP" -e "do shell script \"cd \" & quoted form of \"$AS_DEST\" & \" && nohup \" & quoted form of \"$AS_PY\" & \" cortefacil/launcher.py --background >/dev/null 2>&1 &\"" >/dev/null
   cp "$DEST/assets/icon.icns" "$APP/Contents/Resources/applet.icns" 2>/dev/null || true
   touch "$APP"
   ln -sfn "$APP" "$HOME/Desktop/$APP_NAME" 2>/dev/null || true
@@ -99,3 +105,6 @@ EOF
   nohup "$PY" "$DEST/cortefacil/launcher.py" --background >/dev/null 2>&1 &
 fi
 printf "\n  Se o navegador não abrir sozinho, acesse: http://localhost:8765\n\n"
+}
+
+main "$@"

@@ -16,7 +16,7 @@ Você grava falando para a câmera, solta o arquivo no CorteFácil e ele faz o t
 | 🔥 **Destaca o que importa** | Números e palavras-chave em cor, com emojis |
 | 🔍 **Zoom dinâmico** | Aproxima a cada corte para o vídeo não ficar parado |
 | 📌 **Títulos de tópico** | Cabeçalhos no topo a cada assunto |
-| 🔊 **Áudio nivelado** | Volume no padrão das redes, com música de fundo opcional |
+| 🔊 **Som de profissional** | Efeitos sonoros nos cortes e títulos (sutil ou marcante), volume no padrão das redes e música de fundo opcional |
 | 🎨 **Personalize tudo** | Fonte, cores, contorno, animação, palavras por vez — e arraste legenda e título direto no vídeo. Salve como “meu estilo” |
 | 💬 **Frases de destaque** | Uma frase forte em destaque enquanto você fala o trecho (a IA sugere) |
 | 📱 **Todos os formatos** | 9:16, 4:5, 1:1 e 16:9, com guia das áreas que o Instagram cobre |
@@ -85,7 +85,7 @@ Abra o Claude Code ou o Codex e cole:
 3. Ajuste o que quiser. Tudo aparece na hora, na pré-visualização:
    - **Estilo**: modelo da legenda, cor de destaque, tamanho, título de abertura.
    - **Texto**: clique numa palavra para ir até ela. Selecione um trecho para *Destacar*, *Cortar*, *Editar*, pôr *Emoji* ou marcar um *Tópico*.
-   - **Ajustes**: formato, ritmo dos cortes, zoom, música de fundo.
+   - **Ajustes**: formato, ritmo dos cortes, zoom, efeitos sonoros, música de fundo.
 4. Clique em **Exportar** e depois em **Baixar MP4**.
 
 ### Turbinar com IA (opcional)

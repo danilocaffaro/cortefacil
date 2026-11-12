@@ -48,6 +48,8 @@ cortefacil/
   captions.py     desenho das legendas, títulos e frases de destaque com animações (quadros em paralelo)
   nlp.py          heurísticas PT-BR: palavras-chave, emojis, vícios
   cloud_stt.py    transcrição opcional na nuvem (Groq, Whisper turbo grátis); chave em config.json (600), com fallback local
+  sfx.py          efeitos sonoros dos cortes (whoosh/pop sintetizados, sem arquivos de terceiros), mixados no render
+  validate.py     valida tudo o que a interface envia (cores, música, emoji, números) antes de chegar ao ffmpeg/HTML
   llm.py          "Turbinar com IA": chama `claude -p` ou `codex exec` (conta do usuário, sem API key)
   setup_check.py  onboarding: checa ffmpeg, baixa o modelo Whisper e mostra o progresso
   styles.py       estilos de legenda, formatos e ritmos (compartilhado com a UI via /api/config)
@@ -68,3 +70,10 @@ Pontos centrais do motor:
 - Interface e mensagens em PT-BR, para leigos: nada de termos técnicos na UI.
 - Mantenha a UI num arquivo só, sem build. **Siga `docs/DESIGN.md`** (design system inspirado na Apple): tema claro por padrão e escuro opcional (`data-theme=dark`); uma única cor de ação (Action Blue `#0066cc`, ou `#2997ff` no escuro); SF Pro via `system-ui`; pesos 400/600; botões em pílula com `scale(.95)` ao pressionar; nada de gradientes decorativos; sombra só no "produto" (o vídeo).
 - Toda mudança no motor deve ser testada renderizando `samples/exemplo.mp4` e inspecionando os quadros.
+
+## Segurança (não quebre isto)
+
+- O servidor escuta só em `127.0.0.1`. O middleware `only_local` (app.py) recusa `Host` que não seja localhost (DNS rebinding) e requisições de escrita vindas de outra origem (CSRF). Não adicione CORS.
+- Todo ajuste e palavra que chega por `PUT /api/jobs/{id}` passa por `validate.py`. Ao criar um ajuste novo em `DEFAULT_SETTINGS`, adicione a regra dele lá, senão ele é descartado.
+- Nunca interpole texto do usuário no grafo do ffmpeg sem validar o formato (cores só `#RRGGBB`, música só `music.<ext>`).
+- A chave da Groq fica só em `config.json` (criado com permissão 600) e nunca volta para a interface.

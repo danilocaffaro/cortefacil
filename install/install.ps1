@@ -55,7 +55,7 @@ Ok 'uv pronto'
 
 # ---------------------------------------------------------------- 3. dependências
 Step '3/4  Instalando componentes (pode levar alguns minutos na primeira vez)'
-& $uv sync --quiet
+& $uv sync --frozen --quiet
 if ($LASTEXITCODE -ne 0) { Fail 'Falha ao instalar os componentes. Rode de novo; se persistir, abra uma issue no GitHub.' }
 Ok 'Componentes instalados'
 Set-Content -Path (Join-Path $Dest '.path') -Value $env:PATH -NoNewline -Encoding UTF8

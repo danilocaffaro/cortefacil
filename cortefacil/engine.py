@@ -14,6 +14,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from nlp import emoji_for, is_filler, pick_keywords
 import captions
+import sfx
 from styles import DEFAULT_SETTINGS, FORMATS, PACES, STYLES, resolve_style, resolve_title, zoom_mode
 
 import platform
@@ -450,7 +451,15 @@ def layout(project: dict) -> dict:
         "callouts": callout_items(project, tl),
         "style": resolve_style(project["settings"]),
         "title": resolve_title(project["settings"]),
+        "sfx": _sfx_events(project, segs, zooms, tl),
     }
+
+
+def _sfx_events(project, segs, zooms, tl) -> list:
+    """Efeitos sonoros em tempo EDITADO: [[t, som]]."""
+    if (project["settings"].get("sfx") or "off") not in sfx.LEVELS:
+        return []
+    return [[round(t, 3), k] for t, k in sfx.events(segs, zooms, top_items(project, tl), callout_items(project, tl))]
 
 
 # ----------------------------------------------------------------------------- render final
@@ -501,8 +510,15 @@ def render(project: dict, src: str, work: Path, out_path: str, progress) -> None
     if streams.get("call"):
         inputs += ["-f", "concat", "-safe", "0", "-i", str(streams["call"])]
         call_idx, idx = idx, idx + 1
+    sfx_idx = None
+    ev = _sfx_events(project, segs, zooms, tl) if meta["has_audio"] else []
+    if ev:
+        progress("encode", 0.18, "Criando efeitos sonoros")
+        sfx.build_track(ev, D, rdir / "sfx.wav", sfx.LEVELS[st.get("sfx")])
+        inputs += ["-i", str(rdir / "sfx.wav")]
+        sfx_idx, idx = idx, idx + 1
     music = st.get("music")
-    if music and Path(work / music).exists():
+    if music and re.fullmatch(r"music\.(mp3|m4a|wav|aac|ogg)", music) and (work / music).exists():
         inputs += ["-stream_loop", "-1", "-i", str(work / music)]
         music_idx, idx = idx, idx + 1
 
@@ -566,7 +582,7 @@ def render(project: dict, src: str, work: Path, out_path: str, progress) -> None
         bh = max(8, H // 160)
         rs = resolve_style(st)
         color = (rs["active"] if rs["active_mode"] == "color" else rs.get("box") if rs["active_mode"] == "box" else rs["kw"]).lstrip("#")
-        if color.upper() == "FFFFFF":
+        if color.upper() == "FFFFFF" or not re.fullmatch(r"[0-9A-Fa-f]{6}", color):
             color = "FFE600"
         f.append(f"color=c=0x{color}:s={W}x{bh}:r={fps}:d={D + 1:.3f}[bar];"
                  f"[{last}][bar]overlay=x='-w+w*t/{D:.4f}':y={H - bh}:shortest=1[vb]")
@@ -583,6 +599,11 @@ def render(project: dict, src: str, work: Path, out_path: str, progress) -> None
                      f"[vo2][md]amix=inputs=2:duration=first:normalize=0[aout]")
         else:
             f.append("[an]anull[aout]")
+        if sfx_idx is not None:
+            f[-1] = f[-1].replace("[aout]", "[amx]")
+            f.append(f"[{sfx_idx}:a]aformat=sample_rates=48000:channel_layouts=stereo[fx];"
+                     f"[amx]aformat=sample_rates=48000:channel_layouts=stereo[vx];"
+                     f"[vx][fx]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.89:level=0[aout]")
     graph = rdir / "graph.txt"
     graph.write_text(";\n".join(f))
     cmd = [FF, "-y", "-hide_banner", "-loglevel", "error", *inputs,
