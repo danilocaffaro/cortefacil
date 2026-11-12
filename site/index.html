@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CorteFácil — do vídeo bruto ao Reel pronto</title>
+<meta name="description" content="Editor automático e gratuito para Reels, TikTok e Shorts. Legendas animadas, corte de silêncios, destaques e IA. Roda no seu computador.">
+<meta property="og:title" content="CorteFácil — do vídeo bruto ao Reel pronto">
+<meta property="og:description" content="Solte a gravação crua. Saia com o Reel editado: legendas, cortes, destaques e zoom. Grátis e local.">
+<meta property="og:image" content="https://cortefacil.melhor.dev/img/app.jpg">
+<link rel="icon" href="img/favicon.png">
+<script>try{if(localStorage.getItem('cf_site_theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+<style>
+/* Tokens: Apple DESIGN.md (VoltAgent/awesome-design-md, MIT). Claro por padrão; escuro opcional. */
+:root{
+  color-scheme:light;
+  --primary:#0066cc; --primary-focus:#0071e3; --primary-on-dark:#2997ff;
+  --ink:#1d1d1f; --ink-80:#333; --ink-48:#7a7a7a; --muted:#6e6e73; --body-muted:#cccccc;
+  --canvas:#fff; --parchment:#f5f5f7; --pearl:#fafafc; --tile:#272729; --tile2:#2a2a2c; --tile3:#252527; --black:#000;
+  --hairline:#e0e0e0; --divider:#f0f0f0;
+  /* superfícies por papel (trocam no tema escuro) */
+  --s-light:var(--canvas); --s-alt:var(--parchment); --s-dark:var(--tile); --s-dark2:var(--tile2);
+  --t-light:var(--ink); --t-light2:var(--muted); --link-light:var(--primary);
+  --card:#fff; --card-line:var(--hairline);
+  --product-shadow:rgba(0,0,0,.22) 3px 5px 30px 0;
+  --font-d:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",Helvetica,Arial,sans-serif;
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+:root[data-theme=dark]{
+  color-scheme:dark;
+  --s-light:#000; --s-alt:#161617; --s-dark:var(--tile); --s-dark2:var(--tile3);
+  --t-light:#f5f5f7; --t-light2:#a1a1a6; --link-light:var(--primary-on-dark);
+  --card:#1d1d1f; --card-line:rgba(255,255,255,.12);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--s-light);color:var(--t-light);font:400 17px/1.47 var(--font);letter-spacing:-.374px;-webkit-font-smoothing:antialiased}
+a{color:var(--link-light);text-decoration:none} a:hover{text-decoration:underline}
+img,video{display:block;max-width:100%}
+.wrap{max-width:980px;margin:0 auto;padding:0 22px}
+.wide{max-width:1200px;margin:0 auto;padding:0 22px}
+:focus-visible{outline:2px solid var(--primary-focus);outline-offset:2px}
+
+/* nav global (preta, 44px) + sub-nav fosca (52px) */
+.gnav{background:var(--black);color:#fff;height:44px;font:400 12px/1 var(--font);letter-spacing:-.12px}
+.gnav .wide{display:flex;align-items:center;gap:22px;height:44px}
+.gnav a{color:#d6d6d6} .gnav a:hover{color:#fff;text-decoration:none}
+.gnav .sp{flex:1}
+.gnav button{background:none;border:0;color:#d6d6d6;font:inherit;cursor:pointer;padding:6px}
+.subnav{position:sticky;top:0;z-index:20;height:52px;background:rgba(245,245,247,.8);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.08)}
+:root[data-theme=dark] .subnav{background:rgba(22,22,23,.8);border-bottom-color:rgba(255,255,255,.1)}
+.subnav .wide{display:flex;align-items:center;height:52px;gap:22px}
+.subnav .brand{display:flex;align-items:center;gap:9px;font:600 21px/1.19 var(--font-d);letter-spacing:.231px;color:var(--t-light)}
+.subnav .brand img{width:26px;height:26px;border-radius:6px}
+.subnav .sp{flex:1}
+.subnav .links{display:flex;gap:22px;font:400 12px var(--font);letter-spacing:-.12px}
+.subnav .links a{color:var(--t-light)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:9999px;font:400 17px/1 var(--font);letter-spacing:-.374px;padding:11px 22px;border:1px solid transparent;cursor:pointer;transition:transform .15s;white-space:nowrap}
+.btn:hover{text-decoration:none}
+.btn:active{transform:scale(.95)}
+.btn.primary{background:var(--primary);color:#fff}
+.btn.primary:hover{background:var(--primary-focus)}
+.btn.ghost{background:transparent;color:var(--link-light);border-color:var(--link-light)}
+.btn.sm{font-size:12px;padding:6px 12px}
+.on-dark .btn.ghost{color:var(--primary-on-dark);border-color:var(--primary-on-dark)}
+
+/* tiles */
+.tile{padding:80px 0;text-align:center}
+.t-light{background:var(--s-light);color:var(--t-light)}
+.t-alt{background:var(--s-alt);color:var(--t-light)}
+.t-dark{background:var(--s-dark);color:#fff} .t-dark2{background:var(--s-dark2);color:#fff}
+.on-dark a{color:var(--primary-on-dark)}
+.eyebrow{font:600 21px/1.19 var(--font-d);letter-spacing:.231px;margin:0 0 8px}
+.hero h1{font:600 56px/1.07 var(--font-d);letter-spacing:-.28px;margin:0 0 12px}
+h2.display{font:600 40px/1.1 var(--font-d);letter-spacing:0;margin:0 0 12px}
+.lead{font:400 28px/1.14 var(--font-d);letter-spacing:.196px;margin:0 auto 28px;max-width:760px}
+.sub{color:var(--t-light2)} .on-dark .sub{color:var(--body-muted)}
+.ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.product{margin:56px auto 0;border-radius:18px;box-shadow:var(--product-shadow);width:100%;max-width:1040px}
+
+/* antes/depois em celulares */
+.phones{display:flex;gap:22px;justify-content:center;margin-top:52px;flex-wrap:wrap}
+.phone{width:210px;aspect-ratio:9/16;border-radius:28px;overflow:hidden;background:#000;box-shadow:var(--product-shadow);position:relative}
+.phone img,.phone video{width:100%;height:100%;object-fit:cover}
+.phone .tag{position:absolute;left:10px;top:10px;font:600 12px var(--font);color:#1d1d1f;background:rgba(210,210,215,.85);border-radius:9999px;padding:5px 10px;letter-spacing:-.12px}
+
+/* features */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;text-align:left}
+.card{background:var(--card);border:1px solid var(--card-line);border-radius:18px;padding:24px}
+.card .ic{font-size:28px;line-height:1;margin-bottom:14px}
+.card h3{font:600 17px/1.24 var(--font);letter-spacing:-.374px;margin:0 0 6px}
+.card p{margin:0;font:400 14px/1.43 var(--font);letter-spacing:-.224px;color:var(--t-light2)}
+
+/* IA */
+.ai-list{list-style:none;padding:0;margin:40px auto 0;max-width:620px;text-align:left}
+.ai-list li{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:17px}
+.ai-list li b{font-weight:600}
+.ai-list li span{color:var(--body-muted)}
+.logos{display:flex;gap:12px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.logos span{font:400 14px var(--font);color:#fff;background:rgba(255,255,255,.08);border-radius:9999px;padding:8px 16px}
+
+/* instalar */
+.seg{display:inline-flex;background:rgba(0,0,0,.05);border-radius:9999px;padding:4px;gap:4px;margin:28px 0 22px}
+:root[data-theme=dark] .seg{background:rgba(255,255,255,.08)}
+.seg button{border:0;background:none;color:var(--t-light);font:400 14px var(--font);letter-spacing:-.224px;padding:9px 18px;border-radius:9999px;cursor:pointer}
+.seg button.on{background:var(--card);box-shadow:0 0 0 1px var(--card-line);font-weight:600}
+.steps{max-width:720px;margin:0 auto;text-align:left;counter-reset:s}
+.step{display:flex;gap:16px;padding:18px 0;border-top:1px solid var(--card-line)}
+.step:first-child{border-top:0}
+.step .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--t-light);color:var(--s-light);display:grid;place-items:center;font:600 14px var(--font)}
+.step p{margin:3px 0 0}
+.step small{display:block;color:var(--t-light2);font-size:14px;letter-spacing:-.224px;margin-top:4px}
+.cmd{display:flex;align-items:center;gap:10px;margin-top:12px;background:#1d1d1f;color:#f5f5f7;border-radius:11px;padding:12px 12px 12px 16px;font:400 13px/1.5 var(--mono);letter-spacing:0;overflow:hidden}
+.cmd code{flex:1;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+.cmd code::-webkit-scrollbar{display:none}
+.cmd button{flex:none;border:0;border-radius:8px;background:#fafafc;color:#333;font:400 14px var(--font);letter-spacing:-.224px;padding:7px 14px;cursor:pointer}
+.cmd button:active{transform:scale(.95)}
+kbd{font:600 13px var(--font);border:1px solid var(--card-line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;background:var(--card)}
+.alt{margin-top:26px;font-size:14px;color:var(--t-light2);letter-spacing:-.224px}
+.alt details{margin-top:8px;text-align:left;max-width:720px;margin-left:auto;margin-right:auto}
+.alt summary{cursor:pointer;color:var(--link-light);text-align:center;list-style:none}
+.alt .box{background:var(--card);border:1px solid var(--card-line);border-radius:18px;padding:18px 22px;margin-top:12px;font-size:14px;color:var(--t-light)}
+.req{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.req span{font-size:12px;color:var(--t-light2);border:1px solid var(--card-line);border-radius:9999px;padding:5px 11px;letter-spacing:-.12px}
+
+/* FAQ */
+.faq{max-width:760px;margin:40px auto 0;text-align:left}
+.faq details{border-top:1px solid var(--card-line);padding:18px 0}
+.faq details:last-child{border-bottom:1px solid var(--card-line)}
+.faq summary{cursor:pointer;font:600 17px/1.24 var(--font);letter-spacing:-.374px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary:after{content:"+";color:var(--link-light);font-weight:400;font-size:22px;line-height:1}
+.faq details[open] summary:after{content:"–"}
+.faq p{margin:10px 0 0;color:var(--t-light2)}
+
+footer{background:var(--s-alt);color:var(--t-light2);padding:40px 0 48px;font:400 12px/1.6 var(--font);letter-spacing:-.12px}
+footer .wide{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
+footer a{color:var(--t-light2);text-decoration:underline}
+
+@media (max-width:1068px){.hero h1{font-size:48px}.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:834px){.subnav .links{display:none}.gnav .hide-m{display:none}}
+@media (max-width:640px){
+  .tile{padding:56px 0}.hero h1{font-size:34px;letter-spacing:-.2px}h2.display{font-size:30px}.lead{font-size:21px}
+  .grid{grid-template-columns:1fr}.phone{width:150px;border-radius:20px}.phones{gap:12px}
+}
+@media (max-width:419px){.hero h1{font-size:28px}.phone{width:130px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav class="gnav" aria-label="Global">
+  <div class="wide">
+    <a href="#">CorteFácil</a>
+    <a class="hide-m" href="#recursos">Recursos</a>
+    <a class="hide-m" href="#ia">IA</a>
+    <a class="hide-m" href="#instalar">Instalar</a>
+    <a class="hide-m" href="#duvidas">Dúvidas</a>
+    <span class="sp"></span>
+    <a href="https://github.com/danilocaffaro/cortefacil">GitHub</a>
+    <button id="theme" aria-label="Alternar tema claro/escuro">☾</button>
+  </div>
+</nav>
+
+<div class="subnav">
+  <div class="wide">
+    <span class="brand"><img src="img/icon.png" alt="">CorteFácil</span>
+    <span class="sp"></span>
+    <span class="links"><a href="#recursos">Recursos</a><a href="#como">Como funciona</a><a href="#duvidas">Dúvidas</a></span>
+    <a class="btn primary sm" href="#instalar">Baixar grátis</a>
+  </div>
+</div>
+
+<!-- hero (claro) -->
+<section class="tile t-light hero">
+  <div class="wrap">
+    <p class="eyebrow">Editor automático para Reels, TikTok e Shorts</p>
+    <h1>Do vídeo bruto ao Reel pronto.</h1>
+    <p class="lead sub">Solte a gravação crua. Saia com legendas animadas, silêncios cortados e as palavras certas em destaque.</p>
+    <div class="ctas">
+      <a class="btn primary" href="#instalar">Baixar grátis</a>
+      <a class="btn ghost" href="#como">Veja como funciona ›</a>
+    </div>
+  </div>
+  <div class="wide"><img class="product" src="img/app.jpg" width="1440" height="900" alt="Editor do CorteFácil mostrando um vídeo vertical com legenda em destaque e o painel de estilos"></div>
+</section>
+
+<!-- como funciona (escuro) -->
+<section class="tile t-dark on-dark" id="como">
+  <div class="wrap">
+    <p class="eyebrow">Como funciona</p>
+    <h2 class="display">Grave. Solte. Publique.</h2>
+    <p class="lead sub">O CorteFácil ouve o seu vídeo, corta as pausas e os “éé”, escreve as legendas e dá ritmo com zoom. Você só ajusta o que quiser.</p>
+  </div>
+  <div class="phones">
+    <div class="phone"><video src="img/demo.mp4" poster="img/f_0.8.jpg" autoplay muted loop playsinline></video><span class="tag">Resultado</span></div>
+    <div class="phone"><img src="img/f_7.5.jpg" alt="Quadro com título de tópico e legenda"></div>
+    <div class="phone"><img src="img/f_12.5.jpg" alt="Quadro com palavra-chave destacada"></div>
+    <div class="phone"><img src="img/f_19.5.jpg" alt="Quadro com emoji e destaque"></div>
+  </div>
+</section>
+
+<!-- recursos (claro alternativo) -->
+<section class="tile t-alt" id="recursos">
+  <div class="wrap">
+    <h2 class="display">Tudo o que um editor faria.<br>Em segundos.</h2>
+    <p class="lead sub">E tudo continua editável: cortar uma frase do texto corta o vídeo.</p>
+    <div class="grid">
+      <div class="card"><div class="ic">💬</div><h3>Legendas automáticas</h3><p>Palavra por palavra, sincronizadas, em 5 estilos prontos: Viral, Caixa, Clean, Neon e Impacto.</p></div>
+      <div class="card"><div class="ic">✂️</div><h3>Corta silêncios</h3><p>Remove pausas, respiros e vícios de linguagem. Escolha o ritmo: suave, normal ou acelerado.</p></div>
+      <div class="card"><div class="ic">🔥</div><h3>Destaques e emojis</h3><p>Números e palavras-chave ganham cor e tamanho, com emojis que reforçam a ideia.</p></div>
+      <div class="card"><div class="ic">🔍</div><h3>Zoom dinâmico</h3><p>Aproxima o enquadramento a cada corte, para o vídeo nunca parecer parado.</p></div>
+      <div class="card"><div class="ic">📌</div><h3>Títulos e gancho</h3><p>Um gancho forte na abertura e títulos no topo a cada novo assunto.</p></div>
+      <div class="card"><div class="ic">🔊</div><h3>Som de profissional</h3><p>Volume no padrão das redes e música de fundo que abaixa sozinha quando você fala.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- IA (escuro) -->
+<section class="tile t-dark2 on-dark" id="ia">
+  <div class="wrap">
+    <p class="eyebrow">Turbinar com IA</p>
+    <h2 class="display">Use a IA que você já tem.</h2>
+    <p class="lead sub">Se você usa Claude Code ou Codex, o CorteFácil conversa com ele, com a sua conta e sem chave de API, e edita como um profissional.</p>
+    <ul class="ai-list">
+      <li>🎯 <div><b>Escolhe os destaques certos</b><br><span>As palavras que prendem a atenção, com emojis no ponto.</span></div></li>
+      <li>✂️ <div><b>Corta repetições e recomeços</b><br><span>Fica com a melhor tentativa de cada frase.</span></div></li>
+      <li>📌 <div><b>Cria títulos de tópico</b><br><span>Cabeçalhos no topo a cada assunto, como nos Reels que mais retêm.</span></div></li>
+      <li>🪝 <div><b>Sugere 3 ganchos</b><br><span>Títulos de abertura que geram curiosidade. É só escolher.</span></div></li>
+    </ul>
+    <div class="logos"><span>Claude Code</span><span>Codex</span></div>
+    <p class="sub" style="font-size:14px;margin-top:18px">Opcional. Sem assistente, todo o resto funciona normalmente.</p>
+  </div>
+</section>
+
+<!-- instalar (claro) -->
+<section class="tile t-light" id="instalar">
+  <div class="wrap">
+    <p class="eyebrow">Grátis · Código aberto</p>
+    <h2 class="display">Instale em 2 minutos.</h2>
+    <p class="lead sub">Um comando, e pronto. Sem cadastro, sem senha de administrador.</p>
+    <div class="seg" role="tablist">
+      <button role="tab" data-os="mac" class="on">Mac</button>
+      <button role="tab" data-os="win">Windows</button>
+      <button role="tab" data-os="linux">Linux</button>
+    </div>
+    <div class="steps" id="steps"></div>
+    <div class="req" id="req"></div>
+    <div class="alt">
+      <details><summary>Tem Claude Code ou Codex? Deixe ele instalar para você ›</summary>
+        <div class="box">Abra o seu assistente e cole:<div class="cmd"><code id="agentCmd">Instale o CorteFácil de https://github.com/danilocaffaro/cortefacil seguindo o AGENTS.md do repositório e abra o app para mim.</code><button data-copy="agentCmd">Copiar</button></div></div>
+      </details>
+      <details><summary>Prefere baixar o ZIP? ›</summary>
+        <div class="box">1. <a href="https://github.com/danilocaffaro/cortefacil/archive/refs/heads/main.zip">Baixe o ZIP</a> e descompacte.<br>
+        2. <b>Mac:</b> clique com o botão direito em <i>Instalar no Mac.command</i> e escolha <b>Abrir</b>. <b>Windows:</b> dê dois cliques em <i>Instalar no Windows.bat</i>.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- dúvidas (alternativo) -->
+<section class="tile t-alt" id="duvidas">
+  <div class="wrap">
+    <h2 class="display">Dúvidas.</h2>
+    <div class="faq">
+      <details><summary>Meus vídeos vão para a internet?</summary><p>Não. Tudo roda no seu computador. A única exceção é o “Turbinar com IA”, que envia apenas o texto da transcrição para o Claude Code ou o Codex que você já usa.</p></details>
+      <details><summary>É grátis mesmo?</summary><p>Sim, e com código aberto (licença MIT). O “Turbinar com IA” usa a sua assinatura do Claude Code ou do Codex, se você tiver uma.</p></details>
+      <details><summary>Preciso de um computador potente?</summary><p>Funciona em Macs com chip Apple, onde é mais rápido, e em computadores Windows ou Linux atuais. Na primeira vez ele baixa a IA de transcrição, com 0,5 a 1,6 GB.</p></details>
+      <details><summary>Funciona em quais idiomas?</summary><p>O foco é o português do Brasil: legendas, destaques e emojis são ajustados para PT-BR.</p></details>
+      <details><summary>Como atualizo ou desinstalo?</summary><p>Para atualizar, rode o mesmo comando de instalação; seus projetos são mantidos. Para desinstalar, apague a pasta “CorteFacil” da sua pasta de usuário e o ícone do CorteFácil.</p></details>
+      <details><summary>Deu algum problema. E agora?</summary><p>Abra uma <a href="https://github.com/danilocaffaro/cortefacil/issues">issue no GitHub</a> e anexe o arquivo <i>CorteFacil/logs/servidor.log</i>.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wide">
+    <span>CorteFácil · código aberto, licença MIT · <a href="https://github.com/danilocaffaro/cortefacil">GitHub</a></span>
+    <span>Interface inspirada no design da Apple. Não é afiliado à Apple, à Anthropic nem à OpenAI.</span>
+  </div>
+</footer>
+
+<script>
+const RAW = 'https://raw.githubusercontent.com/danilocaffaro/cortefacil/main/install';
+const OS = {
+  mac: { steps: [
+      ['Abra o Terminal', 'Aperte <kbd>⌘</kbd> + <kbd>Espaço</kbd>, digite <b>Terminal</b> e aperte <kbd>Enter</kbd>.'],
+      ['Cole este comando e aperte Enter', '', `curl -fsSL ${RAW}/install.sh | bash`],
+      ['Pronto', 'O CorteFácil abre sozinho. Depois, é só usar o ícone na Mesa ou em Aplicativos.']],
+    req: ['macOS 12 ou mais novo', 'Melhor em chip Apple (M1 a M4)', '~3 GB livres'] },
+  win: { steps: [
+      ['Abra o PowerShell', 'Aperte a tecla <kbd>Windows</kbd>, digite <b>PowerShell</b> e aperte <kbd>Enter</kbd>.'],
+      ['Cole este comando e aperte Enter', '', `irm ${RAW}/install.ps1 | iex`],
+      ['Pronto', 'O CorteFácil abre sozinho. Depois, é só usar o ícone na Área de Trabalho.']],
+    req: ['Windows 10 ou 11', '8 GB de RAM', '~2 GB livres'] },
+  linux: { steps: [
+      ['Abra o terminal', 'Use o atalho do seu sistema, normalmente <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>.'],
+      ['Cole este comando e aperte Enter', '', `curl -fsSL ${RAW}/install.sh | bash`],
+      ['Pronto', 'O CorteFácil abre no navegador e aparece no menu de aplicativos.']],
+    req: ['Ubuntu, Fedora e afins', '8 GB de RAM', '~2 GB livres'] },
+};
+function render(os){
+  document.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.os === os));
+  document.getElementById('steps').innerHTML = OS[os].steps.map(([t, d, cmd], i) =>
+    `<div class="step"><span class="n">${i+1}</span><div style="flex:1;min-width:0"><p><b>${t}</b></p>${d?`<small>${d}</small>`:''}${cmd?`<div class="cmd"><code id="c${i}">${cmd}</code><button data-copy="c${i}">Copiar</button></div>`:''}</div></div>`).join('');
+  document.getElementById('req').innerHTML = OS[os].req.map(r => `<span>${r}</span>`).join('');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]'); if (!b) return;
+  const txt = document.getElementById(b.dataset.copy).textContent;
+  navigator.clipboard.writeText(txt).then(() => { b.textContent = 'Copiado ✓'; setTimeout(() => b.textContent = 'Copiar', 1800); });
+});
+document.querySelectorAll('.seg button').forEach(b => b.onclick = () => render(b.dataset.os));
+const ua = navigator.userAgent; render(/Windows/i.test(ua) ? 'win' : /Linux/i.test(ua) && !/Android/i.test(ua) ? 'linux' : 'mac');
+const tb = document.getElementById('theme');
+const sync = () => tb.textContent = document.documentElement.dataset.theme === 'dark' ? '☀︎' : '☾';
+tb.onclick = () => { const d = document.documentElement; d.dataset.theme === 'dark' ? delete d.dataset.theme : d.dataset.theme = 'dark';
+  try { localStorage.setItem('cf_site_theme', d.dataset.theme || 'light'); } catch(e){} sync(); };
+sync();
+</script>
+</body>
+</html>

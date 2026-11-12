@@ -458,7 +458,7 @@ $('#suGo').onclick = () => { try { localStorage.setItem('cf_onboarded','1'); } c
 
 // ------------------------------------------------------------------ início
 async function goHome(){
-  location.hash = ''; JOB = null; P = null; L = null; vid.removeAttribute('src'); show('home');
+  location.hash = ''; JOB = null; P = null; L = null; vid.removeAttribute('src'); vid.removeAttribute('poster'); show('home');
   $('#sampleWrap').classList.toggle('hidden', !(SETUP && SETUP.sample));
   const list = await api('/api/jobs').catch(()=>[]);
   $('#recentWrap').classList.toggle('hidden', !list.length);
@@ -505,6 +505,7 @@ async function poll(){
 function openEditor(s){
   P = s.project; L = s.layout; WMAP = {}; P.words.forEach(w => WMAP[w.id] = w);
   show('editor'); $('#fname').textContent = P.name;
+  vid.poster = `/api/jobs/${JOB}/thumb?t=${((L.segments[0]||[0])[0] + 0.3).toFixed(1)}`;
   vid.src = `/api/jobs/${JOB}/proxy`;
   buildStyleCards(); buildSwatches(); bindSettings(); renderScript(); applyFrame(); updateStats();
   if (s.render && s.render.state === 'running') exportVideo(true);

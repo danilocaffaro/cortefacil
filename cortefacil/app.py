@@ -270,6 +270,16 @@ def start_render(jid: str):
     return {"ok": True}
 
 
+@app.get("/api/jobs/{jid}/thumb")
+def thumb(jid: str, t: float = 0.0):
+    d = job_dir(jid)
+    f = d / f"thumb_{int(t * 10)}.jpg"
+    if not f.exists():
+        engine.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{max(0.0, t):.2f}", "-i", str(d / "proxy.mp4"),
+                    "-frames:v", "1", "-q:v", "3", str(f)])
+    return FileResponse(f, media_type="image/jpeg")
+
+
 @app.get("/api/jobs/{jid}/proxy")
 def proxy(jid: str):
     return FileResponse(job_dir(jid) / "proxy.mp4", media_type="video/mp4")
