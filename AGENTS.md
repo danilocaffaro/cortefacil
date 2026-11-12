@@ -49,6 +49,7 @@ cortefacil/
   nlp.py          heurísticas PT-BR: palavras-chave, emojis, vícios
   cloud_stt.py    transcrição opcional na nuvem (Groq, Whisper turbo grátis); chave em config.json (600), com fallback local
   sfx.py          efeitos sonoros dos cortes (whoosh/pop sintetizados, sem arquivos de terceiros), mixados no render
+  promo.py        apoio/patrocínio: lê promo.json do site (1x/dia), valida e mostra nos espaços home/export/engrenagem; sem rastreamento (ver docs/MONETIZACAO.md)
   updater.py      atualizações: confere a última release no GitHub (1x/dia), baixa, troca o código com backup em .update-backup/, roda uv sync --frozen e reinicia; desfaz se falhar
   validate.py     valida tudo o que a interface envia (cores, música, emoji, números) antes de chegar ao ffmpeg/HTML
   llm.py          "Turbinar com IA": chama `claude -p` ou `codex exec` (conta do usuário, sem API key)

@@ -21,6 +21,7 @@ import cloud_stt
 import engine
 import llm
 import setup_check
+import promo
 import sfx
 import updater
 import validate
@@ -218,6 +219,22 @@ def update_apply():
         raise HTTPException(409, "Espere terminar a análise ou a exportação em andamento.")
     updater.STATE.update(state="running", message="Preparando", progress=0.0)
     threading.Thread(target=updater.apply, args=(info["tag"], _busy), daemon=True).start()
+    return {"ok": True}
+
+
+@app.get("/api/promo")
+def promo_get():
+    return promo.visible(cloud_stt.load().get("promo_dismissed") or [])
+
+
+@app.post("/api/promo/dismiss")
+def promo_dismiss(body: dict = Body(...)):
+    cid = str(body.get("id") or "")
+    if not promo.ID.fullmatch(cid):
+        raise HTTPException(400)
+    cfg = cloud_stt.load()
+    cfg["promo_dismissed"] = ([x for x in cfg.get("promo_dismissed") or [] if x != cid] + [cid])[-200:]
+    cloud_stt.save(cfg)
     return {"ok": True}
 
 

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "support": {
+    "title": "Apoie o CorteFácil",
+    "text": "O CorteFácil é grátis e de código aberto. Se ele economiza o seu tempo, deixe uma estrela no GitHub e indique para outros criadores.",
+    "links": [
+      {
+        "label": "Dar uma estrela no GitHub",
+        "url": "https://github.com/danilocaffaro/cortefacil"
+      }
+    ]
+  },
+  "campaigns": []
+}

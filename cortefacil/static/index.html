@@ -125,6 +125,16 @@ header .title{flex:1;text-align:center;color:var(--label2);font-weight:400;overf
 .upd div{flex:1;min-width:0;font-size:14px;line-height:1.35} .upd small{display:block;color:var(--label2);font-size:12px}
 .notes{max-height:42vh;overflow:auto;background:var(--elev2);border-radius:var(--r-m);padding:12px 16px;font-size:14px;line-height:1.45;margin:4px 0 14px;text-align:left}
 .notes h4{margin:10px 0 4px;font-size:14px} .notes h4:first-child{margin-top:0} .notes ul{margin:0;padding-left:18px} .notes p{margin:4px 0}
+.promo{position:relative;display:flex;gap:14px;align-items:center;max-width:760px;width:100%;margin:22px auto 0;padding:14px 44px 14px 14px;background:var(--elev2);border:1px solid var(--hair);border-radius:var(--r-m);text-align:left}
+.promo img{width:64px;height:64px;border-radius:12px;object-fit:cover;flex:none}
+.promo .pb{flex:1;min-width:0} .promo .pl{font-size:11px;color:var(--label2);letter-spacing:.02em;text-transform:uppercase}
+.promo b{display:block;font-size:15px;margin:2px 0} .promo p{margin:0;font-size:13px;color:var(--label2);line-height:1.35}
+.promo .pill{flex:none;text-decoration:none} .promo .px{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;color:var(--label2);display:grid;place-items:center}
+.promo .px:hover{background:var(--fill2)} .promo .px .i{width:12px;height:12px}
+.sheet .promo{margin-top:18px}
+.support{margin-top:6px} .support .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.support .links a{text-decoration:none}
+.supLink{display:block;margin-top:14px;font-size:14px;text-align:center}
 .progress{height:4px;border-radius:2px;background:var(--fill2);overflow:hidden;margin-top:7px}
 .progress i{display:block;height:100%;width:0;background:var(--primary);border-radius:2px;transition:width .4s}
 .spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--fill);border-top-color:var(--label);animation:sp .8s linear infinite;flex:none}
@@ -327,6 +337,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
     </label>
     <div class="sample" id="sampleWrap"><a href="#" id="sampleBtn">Não tem um vídeo agora? Experimente com um exemplo ›</a></div>
     <div class="chips"><span><svg class="i" aria-hidden="true"><use href="#i-text_bubble_fill"/></svg>Legendas automáticas</span><span><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg>Corta silêncios e “éé”</span><span><svg class="i" aria-hidden="true"><use href="#i-flame_fill"/></svg>Destaques e emojis</span><span><svg class="i" aria-hidden="true"><use href="#i-zoom_in"/></svg>Zoom dinâmico</span><span><svg class="i" aria-hidden="true"><use href="#i-pin_fill"/></svg>Títulos de tópico</span><span><svg class="i" aria-hidden="true"><use href="#i-speaker_3_fill"/></svg>Áudio nivelado</span><span><svg class="i" aria-hidden="true"><use href="#i-music_note"/></svg>Música de fundo</span></div>
+    <div id="promoHome"></div>
+    <a href="#" class="supLink hidden" id="supLink">Gostou do CorteFácil? Apoie o projeto ›</a>
     <div class="recent hidden" id="recentWrap"><h3>Recentes</h3><div class="rgrid" id="recent"></div></div>
   </div>
 </section>
@@ -503,6 +515,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
     <h2>Preferências</h2>
     <p class="lead">Como o CorteFácil transcreve a sua fala.</p>
     <div id="prefChooser"></div>
+    <div id="supBox" class="hidden"><div class="sec" style="margin-top:22px" id="supTitle">Apoie o CorteFácil</div>
+      <div class="rows support"><div class="row" style="display:block;padding:12px"><div class="d" id="supText" style="font-size:13px"></div><div class="links" id="supLinks"></div></div></div></div>
     <div class="sec" style="margin-top:22px">Atualizações</div>
     <div class="rows">
       <div class="row"><div><div class="t" id="verNow">Versão</div><div class="d" id="verMsg">—</div></div><button class="tb" id="verCheck">Procurar atualizações</button></div>
@@ -532,6 +546,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
     <div class="progress" id="mBarWrap" style="height:6px"><i id="mBar"></i></div>
     <video id="mVid" class="hidden" controls playsinline></video>
     <div class="acts hidden" id="mActs"><button class="pill ghost lg" id="mClose">Continuar editando</button><a class="pill lg" id="mDl" href="#" style="text-decoration:none">Baixar MP4</a></div>
+    <div id="promoExport"></div>
   </div>
 </div>
 <div class="toast hidden" id="toast"></div>
@@ -608,7 +623,7 @@ function pollModel(box, onChange){
     if (!SETUP.model.ready && !SETUP.model.error && sttChoice === 'local') modelPoll = setTimeout(tick, 1000); };
   tick();
 }
-$('#prefsBtn').onclick = async () => { SETUP = await api('/api/setup'); if (UPD) syncVer(); else checkUpdates(false); sttChoice = null; $('#prefSheet').classList.remove('hidden'); renderChooser($('#prefChooser')); if (sttChoice === 'local' && !SETUP.model.ready) pollModel($('#prefChooser')); };
+$('#prefsBtn').onclick = async () => { SETUP = await api('/api/setup'); if (UPD) syncVer(); else checkUpdates(false); renderSupport(); sttChoice = null; $('#prefSheet').classList.remove('hidden'); renderChooser($('#prefChooser')); if (sttChoice === 'local' && !SETUP.model.ready) pollModel($('#prefChooser')); };
 
 // ------------------------------------------------------------------ onboarding
 async function runSetup(){
@@ -635,12 +650,45 @@ async function goHome(){
   location.hash = ''; JOB = null; P = null; L = null; vid.removeAttribute('src'); vid.removeAttribute('poster'); show('home');
   $('#sampleWrap').classList.toggle('hidden', !(SETUP && SETUP.sample));
   if (!updChecked){ updChecked = true; checkUpdates(false); } else showUpdBanner();
+  renderPromo('home');
   const list = await api('/api/jobs').catch(()=>[]);
   $('#recentWrap').classList.toggle('hidden', !list.length);
   $('#recent').innerHTML = list.map(j => `<button class="rcard" data-id="${j.id}"><b>${esc(j.name)}</b><small>${fmt(j.duration)} · ${j.done?'✓ exportado':'em edição'}</small></button>`).join('');
   $$('.rcard').forEach(b => b.onclick = () => { location.hash = b.dataset.id; });
 }
 $('#homeBtn').onclick = () => { pause(); goHome(); };
+
+// ------------------------------------------------------------------ apoio e patrocínio (conteúdo vem do promo.json do site; nada é rastreado)
+var PROMO = null;
+async function loadPromo(){ if (PROMO) return PROMO; try { PROMO = await api('/api/promo'); } catch(e){ PROMO = {support: null, campaigns: []}; } return PROMO; }
+function promoCard(c){
+  return `<div class="promo" data-pid="${esc(c.id)}">${c.image ? `<img src="${esc(c.image)}" alt="" referrerpolicy="no-referrer">` : ''}
+    <div class="pb"><div class="pl">${esc(c.label)}</div><b>${esc(c.title)}</b>${c.text ? `<p>${esc(c.text)}</p>` : ''}</div>
+    <a class="pill" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">${esc(c.cta)}</a>
+    <button class="px" title="Não mostrar mais" aria-label="Não mostrar mais"><svg class="i" aria-hidden="true"><use href="#i-xmark"/></svg></button></div>`;
+}
+async function renderPromo(slot){
+  const el = $(slot === 'home' ? '#promoHome' : '#promoExport'); if (!el) return;
+  const pr = await loadPromo();
+  const c = (pr.campaigns || []).find(x => x.slot === slot);
+  el.innerHTML = c ? promoCard(c) : '';
+  if (slot === 'home') $('#supLink').classList.toggle('hidden', !pr.support);
+}
+document.addEventListener('click', e => {
+  const x = e.target.closest('.promo .px'); if (!x) return;
+  const card = x.closest('.promo'), id = card.dataset.pid; card.remove();
+  if (PROMO) PROMO.campaigns = PROMO.campaigns.filter(c => c.id !== id);
+  api('/api/promo/dismiss', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id})}).catch(()=>{});
+});
+async function renderSupport(){
+  const pr = await loadPromo(), sp = pr.support;
+  $('#supBox').classList.toggle('hidden', !sp); if (!sp) return;
+  $('#supTitle').textContent = sp.title; $('#supText').textContent = sp.text || 'O CorteFácil é grátis e de código aberto. Se ele te ajuda, considere apoiar.';
+  $('#supLinks').innerHTML = sp.links.map(l => `<a class="pill" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)}</a>`).join('') +
+    (sp.pix ? `<button class="pill ghost" id="pixCopy" data-pix="${esc(sp.pix)}">Copiar chave Pix</button>` : '');
+  const pb = $('#pixCopy'); if (pb) pb.onclick = () => navigator.clipboard.writeText(pb.dataset.pix).then(() => toast('Chave Pix copiada. Obrigado! 💛'));
+}
+$('#supLink').onclick = e => { e.preventDefault(); $('#prefsBtn').click(); setTimeout(() => $('#supBox').scrollIntoView({block:'center', behavior:'smooth'}), 300); };
 
 // ------------------------------------------------------------------ atualizações
 var UPD = null, updChecked = false;  // var: goHome() roda antes desta linha no carregamento
@@ -1115,7 +1163,7 @@ $('#exportBtn').onclick = () => exportVideo(false);
 async function exportVideo(already){
   pause(); clearTimeout(saveT);
   if (!already){ await put({settings:P.settings, words:Object.values(pendingWords)}); pendingWords = {}; await api(`/api/jobs/${JOB}/render`, {method:'POST'}); }
-  $('#exSheet').classList.remove('hidden'); $('#mVid').classList.add('hidden'); $('#mActs').classList.add('hidden'); $('#mBarWrap').classList.remove('hidden'); $('#mDl').classList.remove('hidden');
+  $('#exSheet').classList.remove('hidden'); $('#promoExport').innerHTML = ''; $('#mVid').classList.add('hidden'); $('#mActs').classList.add('hidden'); $('#mBarWrap').classList.remove('hidden'); $('#mDl').classList.remove('hidden');
   $('#mTitle').textContent = 'Exportando…'; $('#mSub').textContent = 'Aplicando cortes, legendas e efeitos.';
   const tick = async () => {
     const s = await (await fetch('/api/jobs/' + JOB)).json(); const r = s.render || {};
@@ -1123,7 +1171,7 @@ async function exportVideo(already){
     if (r.state === 'done'){
       $('#mTitle').textContent = 'Seu vídeo está pronto'; $('#mSub').textContent = `${fmt(L.duration_out)} · ${P.settings.format} · MP4 em alta qualidade`;
       $('#mBarWrap').classList.add('hidden'); const mv = $('#mVid'); mv.src = `/api/jobs/${JOB}/final?v=${r.version}`; mv.classList.remove('hidden');
-      $('#mDl').href = `/api/jobs/${JOB}/final?download=1&v=${r.version}`; $('#mActs').classList.remove('hidden'); return;
+      $('#mDl').href = `/api/jobs/${JOB}/final?download=1&v=${r.version}`; $('#mActs').classList.remove('hidden'); renderPromo('export'); return;
     }
     $('#mBar').style.width = ((r.progress||0)*100) + '%'; $('#mSub').textContent = (r.message || 'Processando') + ` · ${Math.round((r.progress||0)*100)}%`;
     setTimeout(tick, 500);
