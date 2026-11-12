@@ -82,7 +82,7 @@ Abra o Claude Code ou o Codex e cole:
    - **Ajustes**: formato, ritmo dos cortes, zoom, música de fundo.
 4. Clique em **Exportar** e depois em **Baixar MP4**.
 
-### ✨ Turbinar com IA (opcional)
+### Turbinar com IA (opcional)
 
 Se você tem o **[Claude Code](https://claude.com/claude-code)** ou o **[Codex](https://developers.openai.com/codex/cli)** instalado e conectado à sua conta, o botão **Turbinar com IA** usa o seu assistente para:
 
