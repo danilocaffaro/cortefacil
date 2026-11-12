@@ -1,5 +1,9 @@
 # Novidades
 
+## 1.2.0
+- **Apoie o CorteFácil:** nova seção na engrenagem ⚙︎ com formas de apoiar o projeto, que continua grátis e de código aberto.
+- Espaço para indicações e parceiros, sempre identificados e que podem ser fechados no ×. Nenhum dado seu é enviado e nada é rastreado.
+
 ## 1.1.0
 - **Atualizações pelo app:** o CorteFácil avisa quando sai uma versão nova e atualiza com um clique, mantendo seus projetos (e volta atrás sozinho se algo der errado).
 - **Efeitos sonoros nos cortes:** “whoosh” quando o enquadramento muda e “pop” em títulos e frases de destaque. Escolha Sutil, Marcante ou Desligado em Ajustes.
