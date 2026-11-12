@@ -28,12 +28,17 @@ if ($local) {
     $tmp = Join-Path $env:TEMP ("cortefacil-" + [guid]::NewGuid())
     New-Item -ItemType Directory -Path $tmp | Out-Null
     $zip = Join-Path $tmp 'cf.zip'
-    Invoke-WebRequest "https://codeload.github.com/$Repo/zip/refs/heads/$Branch" -OutFile $zip -UseBasicParsing
+    # versão publicada mais recente (release); sem release, usa o main. CORTEFACIL_REF força uma tag.
+    $tag = $env:CORTEFACIL_REF
+    if (-not $tag) { try { $tag = (Invoke-RestMethod "https://api.github.com/repos/$Repo/releases/latest" -UseBasicParsing).tag_name } catch { $tag = $null } }
+    $url = if ($tag) { "https://codeload.github.com/$Repo/zip/refs/tags/$tag" } else { "https://codeload.github.com/$Repo/zip/refs/heads/$Branch" }
+    if ($tag) { Ok "Versão $tag" }
+    Invoke-WebRequest $url -OutFile $zip -UseBasicParsing
     Expand-Archive $zip -DestinationPath $tmp -Force
     $src = Get-ChildItem $tmp -Directory | Select-Object -First 1
     New-Item -ItemType Directory -Force -Path $Dest | Out-Null
     # atualiza sem apagar seus projetos, logs e ambiente
-    robocopy $src.FullName $Dest /E /XD projetos logs .venv /NFL /NDL /NJH /NJS /NP | Out-Null
+    robocopy $src.FullName $Dest /E /XD projetos logs .venv .update-backup /XF config.json /NFL /NDL /NJH /NJS /NP | Out-Null
     Remove-Item $tmp -Recurse -Force
     Ok "Arquivos em $Dest"
   } catch { Fail "Não consegui baixar. Verifique sua internet e tente de novo. ($_)" }

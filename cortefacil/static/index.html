@@ -120,6 +120,11 @@ header .title{flex:1;text-align:center;color:var(--label2);font-weight:400;overf
 .item .ico{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:15px;flex:none}
 .item .tx{flex:1;min-width:0} .item .tx b{font-weight:600;display:block} .item .tx small{color:var(--label2);display:block}
 .ok{color:var(--ok);font-weight:600} .warn{color:var(--warn);font-weight:600}
+.upd{display:flex;align-items:center;gap:12px;max-width:760px;width:100%;margin:0 auto 22px;padding:12px 14px;background:var(--elev2);border:1px solid var(--hair);border-radius:var(--r-m);text-align:left}
+.upd .i{width:22px;height:22px;color:var(--primary);flex:none}
+.upd div{flex:1;min-width:0;font-size:14px;line-height:1.35} .upd small{display:block;color:var(--label2);font-size:12px}
+.notes{max-height:42vh;overflow:auto;background:var(--elev2);border-radius:var(--r-m);padding:12px 16px;font-size:14px;line-height:1.45;margin:4px 0 14px;text-align:left}
+.notes h4{margin:10px 0 4px;font-size:14px} .notes h4:first-child{margin-top:0} .notes ul{margin:0;padding-left:18px} .notes p{margin:4px 0}
 .progress{height:4px;border-radius:2px;background:var(--fill2);overflow:hidden;margin-top:7px}
 .progress i{display:block;height:100%;width:0;background:var(--primary);border-radius:2px;transition:width .4s}
 .spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--fill);border-top-color:var(--label);animation:sp .8s linear infinite;flex:none}
@@ -313,6 +318,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
     <div class="eyebrow">Editor automático para Reels, TikTok e Shorts</div>
     <h1>Do vídeo bruto ao<br><span>Reel pronto.</span></h1>
     <p class="sub">Solte a gravação crua. O CorteFácil transcreve, corta os silêncios, cria legendas animadas e destaca o que importa.</p>
+    <div class="upd hidden" id="updBanner"><svg class="i" aria-hidden="true"><use href="#i-sparkles"/></svg><div><b id="updTitle">Nova versão disponível</b><small>Seus projetos e preferências são mantidos.</small></div><button class="pill" id="updOpen">Ver novidades</button></div>
     <label class="drop" id="drop">
       <div class="ic"><svg class="i xl" aria-hidden="true"><use href="#i-arrow_up_circle_fill"/></svg></div>
       <strong>Arraste seu vídeo aqui</strong>
@@ -497,7 +503,24 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
     <h2>Preferências</h2>
     <p class="lead">Como o CorteFácil transcreve a sua fala.</p>
     <div id="prefChooser"></div>
+    <div class="sec" style="margin-top:22px">Atualizações</div>
+    <div class="rows">
+      <div class="row"><div><div class="t" id="verNow">Versão</div><div class="d" id="verMsg">—</div></div><button class="tb" id="verCheck">Procurar atualizações</button></div>
+      <div class="row"><div><div class="t">Avisar quando houver versão nova</div><div class="d">Confere no GitHub 1 vez por dia. Nenhum dado seu é enviado.</div></div><label class="sw"><input type="checkbox" id="verAuto"><i></i></label></div>
+    </div>
     <div class="acts"><button class="pill lg" data-close>Pronto</button></div>
+  </div>
+</div>
+
+<!-- sheet: atualização -->
+<div class="backdrop hidden" id="updSheet">
+  <div class="sheet">
+    <h2 id="updH">Nova versão</h2>
+    <p class="lead" id="updLead">O que mudou:</p>
+    <div class="notes" id="updNotes"></div>
+    <div id="updRun" class="hidden"><div class="help" id="updMsg">Preparando…</div><div class="progress"><i id="updBar"></i></div></div>
+    <div class="help hidden" id="updErr" style="color:var(--danger)"></div>
+    <div class="acts" id="updActs"><button class="pill lg ghost" data-close>Agora não</button><button class="pill lg" id="updGo">Atualizar agora</button></div>
   </div>
 </div>
 
@@ -585,7 +608,7 @@ function pollModel(box, onChange){
     if (!SETUP.model.ready && !SETUP.model.error && sttChoice === 'local') modelPoll = setTimeout(tick, 1000); };
   tick();
 }
-$('#prefsBtn').onclick = async () => { SETUP = await api('/api/setup'); sttChoice = null; $('#prefSheet').classList.remove('hidden'); renderChooser($('#prefChooser')); if (sttChoice === 'local' && !SETUP.model.ready) pollModel($('#prefChooser')); };
+$('#prefsBtn').onclick = async () => { SETUP = await api('/api/setup'); if (UPD) syncVer(); else checkUpdates(false); sttChoice = null; $('#prefSheet').classList.remove('hidden'); renderChooser($('#prefChooser')); if (sttChoice === 'local' && !SETUP.model.ready) pollModel($('#prefChooser')); };
 
 // ------------------------------------------------------------------ onboarding
 async function runSetup(){
@@ -611,12 +634,74 @@ $('#suGo').onclick = () => { try { localStorage.setItem('cf_onboarded','1'); } c
 async function goHome(){
   location.hash = ''; JOB = null; P = null; L = null; vid.removeAttribute('src'); vid.removeAttribute('poster'); show('home');
   $('#sampleWrap').classList.toggle('hidden', !(SETUP && SETUP.sample));
+  if (!updChecked){ updChecked = true; checkUpdates(false); } else showUpdBanner();
   const list = await api('/api/jobs').catch(()=>[]);
   $('#recentWrap').classList.toggle('hidden', !list.length);
   $('#recent').innerHTML = list.map(j => `<button class="rcard" data-id="${j.id}"><b>${esc(j.name)}</b><small>${fmt(j.duration)} · ${j.done?'✓ exportado':'em edição'}</small></button>`).join('');
   $$('.rcard').forEach(b => b.onclick = () => { location.hash = b.dataset.id; });
 }
 $('#homeBtn').onclick = () => { pause(); goHome(); };
+
+// ------------------------------------------------------------------ atualizações
+var UPD = null, updChecked = false;  // var: goHome() roda antes desta linha no carregamento
+function notesHtml(md){
+  const out = []; let list = false;
+  for (const raw of (md || '').split(/\r?\n/)){
+    const l = raw.trim(); const inline = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`(.+?)`/g, '<code>$1</code>');
+    if (/^[-*] /.test(l)){ if (!list){ out.push('<ul>'); list = true; } out.push('<li>' + inline(l.slice(2)) + '</li>'); continue; }
+    if (list){ out.push('</ul>'); list = false; }
+    if (!l) continue;
+    out.push(/^#+ /.test(l) ? '<h4>' + inline(l.replace(/^#+ /, '')) + '</h4>' : '<p>' + inline(l) + '</p>');
+  }
+  if (list) out.push('</ul>');
+  return out.join('') || '<p>Melhorias e correções.</p>';
+}
+function showUpdBanner(){
+  const on = !!(UPD && UPD.available && !UPD.dev);
+  $('#updBanner').classList.toggle('hidden', !on);
+  if (on) $('#updTitle').textContent = `Nova versão ${UPD.latest} disponível`;
+}
+async function checkUpdates(force){
+  try { UPD = await api('/api/update' + (force ? '?force=1' : '')); } catch(e){ return null; }
+  showUpdBanner(); syncVer(); return UPD;
+}
+function syncVer(){
+  if (!UPD) return;
+  $('#verNow').textContent = `Versão ${UPD.current}`;
+  $('#verAuto').checked = UPD.auto !== false;
+  $('#verMsg').textContent = UPD.dev ? 'Cópia do git: atualize com git pull.' : UPD.available ? `Versão ${UPD.latest} disponível` :
+    UPD.error ? UPD.error : UPD.latest ? 'Você está na versão mais recente.' : 'Ainda não há versões publicadas.';
+}
+function openUpd(){
+  if (!UPD || !UPD.available) return;
+  $('#updH').textContent = `CorteFácil ${UPD.latest}`;
+  $('#updLead').textContent = `Você está na versão ${UPD.current}. O que mudou:`;
+  $('#updNotes').innerHTML = notesHtml(UPD.notes);
+  $('#updRun').classList.add('hidden'); $('#updErr').classList.add('hidden'); $('#updActs').classList.remove('hidden');
+  $('#updSheet').classList.remove('hidden');
+}
+$('#updOpen').onclick = openUpd;
+$('#verCheck').onclick = async () => { const b = $('#verCheck'); b.disabled = true; b.textContent = 'Procurando…';
+  await checkUpdates(true); b.disabled = false; b.textContent = 'Procurar atualizações';
+  if (UPD && UPD.available && !UPD.dev){ $('#prefSheet').classList.add('hidden'); openUpd(); } };
+$('#verAuto').onchange = e => api('/api/update', {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({auto: e.target.checked})}).catch(()=>{});
+$('#updGo').onclick = async () => {
+  $('#updErr').classList.add('hidden');
+  try { await api('/api/update', {method:'POST'}); } catch(e){ $('#updErr').textContent = e.message; $('#updErr').classList.remove('hidden'); return; }
+  $('#updActs').classList.add('hidden'); $('#updRun').classList.remove('hidden');
+  const target = UPD.latest;
+  const poll = async () => {
+    let r = null;
+    try { r = await api('/api/update'); } catch(e){}
+    if (r && r.current === target){ $('#updMsg').textContent = 'Pronto! Abrindo a nova versão…'; $('#updBar').style.width = '100%'; setTimeout(() => location.reload(), 800); return; }
+    const j = r && r.job;
+    if (j && j.state === 'error'){ $('#updRun').classList.add('hidden'); $('#updErr').textContent = j.message; $('#updErr').classList.remove('hidden'); $('#updActs').classList.remove('hidden'); return; }
+    if (j && j.message){ $('#updMsg').textContent = j.message; $('#updBar').style.width = Math.round((j.progress||0)*100) + '%'; }
+    else if (!r){ $('#updMsg').textContent = 'Reiniciando o CorteFácil…'; }
+    setTimeout(poll, 1000);
+  };
+  poll();
+};
 $('#quitBtn').onclick = async () => { if (!confirm('Fechar o CorteFácil? Seus projetos continuam salvos.')) return;
   await fetch('/api/shutdown',{method:'POST'}).catch(()=>{}); document.body.innerHTML = '<div class="screen"><div class="card" style="text-align:center"><h2>Até logo! 👋</h2><p class="lead">O CorteFácil foi fechado. Para abrir de novo, use o ícone do CorteFácil.</p></div></div>'; };
 

@@ -111,7 +111,8 @@ Depende da sua escolha. Com a transcrição **no computador**, nada sai da sua m
 Na pasta `CorteFacil/projetos`, dentro da sua pasta de usuário.
 
 **Como atualizo?**
-Rode de novo o comando de instalação. Seus projetos são mantidos.
+O CorteFácil avisa sozinho na tela inicial quando sai uma versão nova: clique em **Ver novidades › Atualizar agora**. Ele baixa a versão, reinicia e mantém seus projetos e preferências; se algo der errado, volta para a versão anterior. Também dá para procurar na engrenagem ⚙︎ › *Procurar atualizações*.
+> Instalou a versão 1.0.0? Ela ainda não tem o aviso: rode o comando de instalação mais uma vez e, daí em diante, as atualizações chegam pelo app.
 
 **Como fecho o app?**
 Clique no botão ⏻ no canto superior direito.

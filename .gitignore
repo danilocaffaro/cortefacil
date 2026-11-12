@@ -9,3 +9,4 @@ cortefacil/jobs/
 .claude/
 .ref/
 config.json
+.update-backup/

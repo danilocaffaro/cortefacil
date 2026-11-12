@@ -49,6 +49,7 @@ cortefacil/
   nlp.py          heurísticas PT-BR: palavras-chave, emojis, vícios
   cloud_stt.py    transcrição opcional na nuvem (Groq, Whisper turbo grátis); chave em config.json (600), com fallback local
   sfx.py          efeitos sonoros dos cortes (whoosh/pop sintetizados, sem arquivos de terceiros), mixados no render
+  updater.py      atualizações: confere a última release no GitHub (1x/dia), baixa, troca o código com backup em .update-backup/, roda uv sync --frozen e reinicia; desfaz se falhar
   validate.py     valida tudo o que a interface envia (cores, música, emoji, números) antes de chegar ao ffmpeg/HTML
   llm.py          "Turbinar com IA": chama `claude -p` ou `codex exec` (conta do usuário, sem API key)
   setup_check.py  onboarding: checa ffmpeg, baixa o modelo Whisper e mostra o progresso
@@ -77,3 +78,11 @@ Pontos centrais do motor:
 - Todo ajuste e palavra que chega por `PUT /api/jobs/{id}` passa por `validate.py`. Ao criar um ajuste novo em `DEFAULT_SETTINGS`, adicione a regra dele lá, senão ele é descartado.
 - Nunca interpole texto do usuário no grafo do ffmpeg sem validar o formato (cores só `#RRGGBB`, música só `music.<ext>`).
 - A chave da Groq fica só em `config.json` (criado com permissão 600) e nunca volta para a interface.
+
+## Publicar uma versão nova (o app dos usuários só vê *releases*)
+
+1. Aumente `VERSION` (ex.: 1.1.0 → 1.2.0) e descreva as mudanças em `CHANGELOG.md`.
+2. Commit + push no `main`.
+3. `gh release create v1.2.0 --title "CorteFácil 1.2.0" --notes "<texto curto em português, em tópicos>"`. As notas aparecem na janela "Atualizar agora" do app.
+
+A tag precisa ter o `VERSION` igual ao número dela. O instalador também instala a última release (sem release, usa o `main`). Para testar o atualizador sem publicar, use `CORTEFACIL_UPDATE_API` e `CORTEFACIL_UPDATE_DOWNLOAD` apontando para um servidor local.

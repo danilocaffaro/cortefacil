@@ -43,6 +43,11 @@ def load_saved_path():
 
 def main():
     no_browser = "--no-browser" in sys.argv
+    if "--wait-port" in sys.argv:  # reinício após atualizar: espera a versão anterior liberar a porta
+        for _ in range(60):
+            if not port_busy():
+                break
+            time.sleep(0.5)
     if running():
         if not no_browser:
             webbrowser.open(URL)

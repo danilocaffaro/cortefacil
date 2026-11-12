@@ -22,6 +22,7 @@ import engine
 import llm
 import setup_check
 import sfx
+import updater
 import validate
 from styles import ANIMS, DEFAULT_SETTINGS, FONTS, FORMATS, STYLES
 
@@ -177,6 +178,47 @@ def prefs_put(body: dict = Body(...)):
         raise HTTPException(400, "Cole a sua chave da Groq para usar a transcrição na nuvem.")
     cloud_stt.save(cfg)
     return cloud_stt.public(cfg)
+
+
+def _busy() -> bool:
+    for st in STATUS.values():
+        if st.get("state") == "analyzing":
+            return True
+        if (st.get("render") or {}).get("state") == "running" or (st.get("ai") or {}).get("state") == "running":
+            return True
+    return False
+
+
+@app.get("/api/update")
+def update_check(force: bool = False):
+    cfg = cloud_stt.load()
+    auto = cfg.get("update_check", True)
+    info = updater.check(force=True) if force else (updater.check() if auto else {"current": updater.current(),
+                                                                                  "dev": updater.is_dev_checkout(),
+                                                                                  "available": False})
+    return {**info, "auto": auto, "job": dict(updater.STATE)}
+
+
+@app.put("/api/update")
+def update_prefs(body: dict = Body(...)):
+    cfg = cloud_stt.load()
+    cfg["update_check"] = bool(body.get("auto", True))
+    cloud_stt.save(cfg)
+    return {"auto": cfg["update_check"]}
+
+
+@app.post("/api/update")
+def update_apply():
+    info = updater.check()
+    if not info.get("available"):
+        raise HTTPException(400, "Você já está na versão mais recente.")
+    if updater.STATE.get("state") in ("running", "restarting"):
+        return {"ok": True}
+    if _busy():
+        raise HTTPException(409, "Espere terminar a análise ou a exportação em andamento.")
+    updater.STATE.update(state="running", message="Preparando", progress=0.0)
+    threading.Thread(target=updater.apply, args=(info["tag"], _busy), daemon=True).start()
+    return {"ok": True}
 
 
 @app.post("/api/setup/prepare")

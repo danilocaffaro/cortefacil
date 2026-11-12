@@ -34,13 +34,21 @@ if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/../pyproject.toml" ] && grep -q 'na
   DEST="$(cd "$SCRIPT_DIR/.." && pwd)"
   ok "Usando a pasta atual: $DEST"
 else
+  # versão publicada mais recente (release); sem release, usa o main. CORTEFACIL_REF força uma tag.
+  local TAG="${CORTEFACIL_REF:-}"
+  if [ -z "$TAG" ]; then
+    TAG="$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
+      | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1 || true)"
+  fi
+  local URL="https://codeload.github.com/$REPO/tar.gz/refs/heads/$BRANCH"
+  if [ -n "$TAG" ]; then URL="https://codeload.github.com/$REPO/tar.gz/refs/tags/$TAG"; info "Versão $TAG"; fi
   TMP="$(mktemp -d)"
-  curl -fsSL "https://codeload.github.com/$REPO/tar.gz/refs/heads/$BRANCH" | tar -xz -C "$TMP" \
+  curl -fsSL "$URL" | tar -xz -C "$TMP" \
     || fail "Não consegui baixar. Verifique sua internet e tente de novo."
   SRC="$(find "$TMP" -mindepth 1 -maxdepth 1 -type d | head -1)"
   mkdir -p "$DEST"
   # atualiza sem apagar seus projetos, logs e ambiente
-  (cd "$SRC" && tar -cf - --exclude ./projetos --exclude ./logs --exclude ./.venv .) | (cd "$DEST" && tar -xf -)
+  (cd "$SRC" && tar -cf - --exclude ./projetos --exclude ./logs --exclude ./.venv --exclude ./config.json --exclude ./.update-backup .) | (cd "$DEST" && tar -xf -)
   rm -rf "$TMP"
   ok "Arquivos em $DEST"
 fi
