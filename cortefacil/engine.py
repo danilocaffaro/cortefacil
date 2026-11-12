@@ -124,7 +124,30 @@ def whisper_backend() -> str:
     return "faster"
 
 
-def transcribe(wav: str, language: str | None = "pt") -> list[dict]:
+def transcribe(wav: str, language: str | None = "pt", progress=None, info: dict | None = None) -> list[dict]:
+    """Transcreve com tempo por palavra. Usa a nuvem (Groq) se o usuário escolheu; senão/se falhar, a IA local."""
+    import cloud_stt
+    raw: list[tuple[str, float, float, float]] = []
+    info = info if info is not None else {}
+    cfg = cloud_stt.load()
+    if cloud_stt.cloud_enabled(cfg):
+        try:
+            if progress:
+                progress("transcribe", 0.3, "Transcrevendo na nuvem (Groq)")
+            raw = cloud_stt.transcribe(wav, FF, cfg["groq_key"], language)
+            info["stt"] = "groq"
+        except Exception as e:  # noqa: BLE001
+            info["stt_note"] = f"{e} Usei a IA do computador."
+            if progress:
+                progress("transcribe", 0.32, "Nuvem indisponível — transcrevendo no computador")
+            raw = []
+    if not raw:
+        raw = _transcribe_local(wav, language)
+        info.setdefault("stt", "local")
+    return _clean_words(raw)
+
+
+def _transcribe_local(wav: str, language: str | None) -> list[tuple[str, float, float, float]]:
     raw: list[tuple[str, float, float, float]] = []
     if whisper_backend() == "mlx":
         import mlx_whisper
@@ -140,6 +163,10 @@ def transcribe(wav: str, language: str | None = "pt") -> list[dict]:
         for s in segs:
             for w in s.words or []:
                 raw.append((w.word, float(w.start), float(w.end), float(w.probability)))
+    return raw
+
+
+def _clean_words(raw) -> list[dict]:
     words: list[dict] = []
     for txt, st, en, pr in raw:
         # tokens sem espaço inicial que são só pontuação/símbolo ("%", "?") grudam na anterior
@@ -187,7 +214,9 @@ def analyze(src: str, work: Path, progress) -> dict:
         wav = str(work / "audio.wav")
         run(["ffmpeg", "-y", "-loglevel", "error", "-i", src, "-vn", "-ac", "1", "-ar", "16000", wav])
         progress("transcribe", 0.3, "Transcrevendo a fala (IA)")
-        words = transcribe(wav)
+        stt_info: dict = {}
+        words = transcribe(wav, progress=progress, info=stt_info)
+        meta.update(stt_info)
         progress("silence", 0.85, "Detectando silêncios")
         silences = detect_silences(wav)
     progress("keywords", 0.93, "Escolhendo palavras-chave")

@@ -14,6 +14,7 @@ import uvicorn
 from fastapi import Body, FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 
+import cloud_stt
 import engine
 import llm
 import setup_check
@@ -111,6 +112,31 @@ def fonts(name: str):
 @app.get("/api/setup")
 def setup_status():
     return {**setup_check.status(), "version": VERSION, "sample": SAMPLE.exists()}
+
+
+@app.get("/api/prefs")
+def prefs_get():
+    return cloud_stt.public()
+
+
+@app.put("/api/prefs")
+def prefs_put(body: dict = Body(...)):
+    cfg = cloud_stt.load()
+    if body.get("stt") in ("local", "groq"):
+        cfg["stt"] = body["stt"]
+    if "groq_key" in body:
+        key = (body.get("groq_key") or "").strip()
+        if key:
+            ok, msg = cloud_stt.test_key(key)
+            if not ok:
+                raise HTTPException(400, msg)
+            cfg["groq_key"] = key
+        else:
+            cfg.pop("groq_key", None)
+    if cfg.get("stt") == "groq" and not cfg.get("groq_key"):
+        raise HTTPException(400, "Cole a sua chave da Groq para usar a transcrição na nuvem.")
+    cloud_stt.save(cfg)
+    return cloud_stt.public(cfg)
 
 
 @app.post("/api/setup/prepare")

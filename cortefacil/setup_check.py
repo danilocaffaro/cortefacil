@@ -9,6 +9,7 @@ import sys
 import threading
 from pathlib import Path
 
+import cloud_stt
 import engine
 import llm
 
@@ -67,6 +68,7 @@ def status() -> dict:
                   "engine": "Whisper large-v3-turbo (GPU do Mac)" if engine.whisper_backend() == "mlx"
                   else "Whisper small (CPU)"},
         "llm": {"claude": av["claude"], "codex": av["codex"]},
+        "stt": cloud_stt.public(),
     }
 
 

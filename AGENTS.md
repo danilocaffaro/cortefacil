@@ -33,6 +33,7 @@ O launcher reaproveita a instância que já estiver rodando. A porta muda com `C
 |---|---|
 | App não abre | `logs/servidor.log`; porta 8765 ocupada (`lsof -i :8765`) |
 | "Preparando…" parado | download do modelo do Hugging Face (internet ou proxy); cache em `~/.cache/huggingface/hub` |
+| Transcrição na nuvem falha | chave em `config.json` (não imprima); teste com `cloud_stt.test_key`; o app cai para a IA local sozinho |
 | IA "não encontrado" | `claude --version` / `codex --version` no terminal; reinstale para regravar o `.path` |
 | IA "não conectado" | o usuário precisa rodar `claude` (ou `codex`) uma vez e fazer login |
 | Erro no ffmpeg | `uv run python -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())"` |
@@ -46,6 +47,7 @@ cortefacil/
   engine.py       análise (probe, proxy, Whisper, silêncios) → linha do tempo → render ffmpeg
   captions.py     desenho das legendas, títulos e frases de destaque com animações (quadros em paralelo)
   nlp.py          heurísticas PT-BR: palavras-chave, emojis, vícios
+  cloud_stt.py    transcrição opcional na nuvem (Groq, Whisper turbo grátis); chave em config.json (600), com fallback local
   llm.py          "Turbinar com IA": chama `claude -p` ou `codex exec` (conta do usuário, sem API key)
   setup_check.py  onboarding: checa ffmpeg, baixa o modelo Whisper e mostra o progresso
   styles.py       estilos de legenda, formatos e ritmos (compartilhado com a UI via /api/config)

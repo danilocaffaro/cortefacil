@@ -54,7 +54,11 @@ irm https://raw.githubusercontent.com/danilocaffaro/cortefacil/main/install/inst
 
 Use o mesmo comando do Mac no terminal.
 
-> **Na primeira vez que abrir**, o CorteFácil baixa a IA de transcrição. Ela tem cerca de 1,6 GB no Mac com chip Apple e 0,5 GB nos outros computadores. Isso só acontece uma vez, e a tela mostra o progresso.
+> **Na primeira vez que abrir**, você escolhe como transcrever a fala:
+> - **Na nuvem (recomendado):** grátis pela [Groq](https://console.groq.com/keys), até ~8 h de áudio por dia, mais rápido e sem download. Crie a conta, copie a chave e cole no app (leva 1 minuto). O áudio do vídeo é enviado à Groq.
+> - **No computador:** sem conta e sem internet; o vídeo não sai da sua máquina. Baixa a IA uma única vez (1,6 GB no Mac com chip Apple, 0,5 GB nos outros).
+>
+> Dá para trocar depois na engrenagem ⚙︎. Se a nuvem falhar, o app usa a IA do computador automaticamente.
 
 <details>
 <summary><b>Prefere baixar o ZIP?</b></summary>
@@ -101,7 +105,7 @@ Você não precisa de chave de API: ele usa a conta que você já tem. Sem assis
 ## Dúvidas
 
 **Meus vídeos vão para a internet?**
-Não. Tudo roda no seu computador. A única exceção é o *Turbinar com IA*: ele envia só o **texto** da transcrição para o Claude Code ou o Codex que você usa.
+Depende da sua escolha. Com a transcrição **no computador**, nada sai da sua máquina. Com a transcrição **na nuvem**, só o **áudio** vai para a Groq (o vídeo e a edição ficam no computador). O *Turbinar com IA* envia apenas o **texto** da transcrição para o Claude Code ou o Codex que você usa.
 
 **Onde ficam meus projetos?**
 Na pasta `CorteFacil/projetos`, dentro da sua pasta de usuário.

@@ -8,3 +8,4 @@ logs/
 cortefacil/jobs/
 .claude/
 .ref/
+config.json
