@@ -3,7 +3,7 @@
 <h1 align="center">CorteFácil</h1>
 <p align="center"><b>Do vídeo bruto ao Reel pronto.</b><br>
 Editor automático de vídeos para Instagram Reels, TikTok e YouTube Shorts.<br>
-Grátis, roda no seu computador e não precisa de conta.</p>
+Grátis, roda no seu computador e não precisa de conta.<br><a href="https://cortefacil.melhor.dev">cortefacil.melhor.dev</a></p>
 
 ---
 
