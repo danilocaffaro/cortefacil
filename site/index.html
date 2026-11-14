@@ -124,6 +124,10 @@ kbd{font:600 13px var(--font);border:1px solid var(--card-line);border-bottom-wi
 .alt details{margin-top:8px;text-align:left;max-width:720px;margin-left:auto;margin-right:auto}
 .alt summary{cursor:pointer;color:var(--link-light);text-align:center;list-style:none}
 .alt .box{background:var(--card);border:1px solid var(--card-line);border-radius:18px;padding:18px 22px;margin-top:12px;font-size:14px;color:var(--t-light)}
+.dlbtn{margin-top:12px}
+.term{margin-top:6px;padding:14px 0 0 46px;border-top:1px solid var(--card-line);text-align:left}
+.term summary{cursor:pointer;color:var(--link-light);font-size:14px;list-style:none}
+.term small{display:block;color:var(--t-light2);font-size:14px;margin-top:10px}
 .req{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
 .req span{font-size:12px;color:var(--t-light2);border:1px solid var(--card-line);border-radius:9999px;padding:5px 11px;letter-spacing:-.12px}
 
@@ -255,7 +259,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <h1>Do vídeo bruto ao Reel pronto.</h1>
     <p class="lead sub">Solte a gravação crua. Saia com legendas animadas, silêncios cortados e as palavras certas em destaque.</p>
     <div class="ctas">
-      <a class="btn primary" href="#instalar">Baixar grátis</a>
+      <a class="btn primary" href="#instalar" data-dl>Baixar grátis</a>
       <a class="btn ghost" href="#como">Veja como funciona ›</a>
     </div>
   </div>
@@ -331,14 +335,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <!-- transcrição na nuvem (alternativo) -->
 <section class="tile t-alt" id="nuvem">
   <div class="wide split rev">
-    <img class="product shot" src="img/app-nuvem.jpg?v=3" width="760" height="680" alt="Primeira abertura do CorteFácil: escolha entre transcrever na nuvem (recomendado) ou no computador" loading="lazy">
+    <img class="product shot" src="img/app-nuvem.jpg?v=4" width="752" height="718" alt="Primeira abertura do CorteFácil: escolha entre transcrever no computador (recomendado) ou na nuvem" loading="lazy">
     <div class="split-text">
       <p class="eyebrow">Transcrição</p>
-      <h2 class="display">Grátis. Rápida. Sem download.</h2>
+      <h2 class="display">Grátis. Sem conta. No seu computador.</h2>
       <p class="lead sub">Na primeira vez, você escolhe como o CorteFácil ouve a sua fala.</p>
       <div class="opts">
-        <div class="opt"><span class="oi" style="background:#0066cc"><svg class="i" aria-hidden="true"><use href="#i-cloud_fill"/></svg></span><div><b>Na nuvem <em>recomendado</em></b><p>Grátis pela Groq, até ~8 h de áudio por dia, com o modelo Whisper grande. Crie a conta, cole a chave — leva 1 minuto.</p></div></div>
-        <div class="opt"><span class="oi" style="background:#34c759"><svg class="i" aria-hidden="true"><use href="#i-desktopcomputer"/></svg></span><div><b>No computador</b><p>Sem conta e sem internet: o vídeo nunca sai da sua máquina. Baixa a IA uma única vez.</p></div></div>
+        <div class="opt"><span class="oi" style="background:#34c759"><svg class="i" aria-hidden="true"><use href="#i-desktopcomputer"/></svg></span><div><b>No computador <em>recomendado</em></b><p>Sem conta e sem internet: o vídeo nunca sai da sua máquina. Baixa a IA uma única vez.</p></div></div>
+        <div class="opt"><span class="oi" style="background:#0066cc"><svg class="i" aria-hidden="true"><use href="#i-cloud_fill"/></svg></span><div><b>Na nuvem</b><p>Mais rápida em computadores antigos. Grátis pela Groq, até ~8 h de áudio por dia: crie a conta e cole a chave (leva 1 minuto).</p></div></div>
       </div>
       <p class="sub note"><svg class="i" aria-hidden="true"><use href="#i-lock_fill"/></svg> A edição e o vídeo ficam sempre no seu computador. Se a nuvem falhar, o app usa a IA local sozinho.</p>
     </div>
@@ -350,7 +354,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <div class="wrap">
     <p class="eyebrow">Grátis · Código aberto</p>
     <h2 class="display">Instale em 2 minutos.</h2>
-    <p class="lead sub">Um comando, e pronto. Sem cadastro, sem senha de administrador.</p>
+    <p class="lead sub">Baixe, abra e pronto. Sem cadastro, sem senha de administrador.</p>
     <div class="mobile-note"><svg class="i" aria-hidden="true"><use href="#i-desktopcomputer"/></svg><div><b>O CorteFácil roda no computador.</b><br>Mande este link para você e instale no Mac ou no PC.<br><button class="btn primary sm" id="shareBtn">Enviar link para mim</button></div></div>
     <div class="seg" role="tablist">
       <button role="tab" data-os="mac" class="on">Mac</button>
@@ -365,7 +369,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       </details>
       <details><summary>Prefere baixar o ZIP? ›</summary>
         <div class="box">1. <a href="https://github.com/danilocaffaro/cortefacil/archive/refs/heads/main.zip">Baixe o ZIP</a> e descompacte.<br>
-        2. <b>Mac:</b> clique com o botão direito em <i>Instalar no Mac.command</i> e escolha <b>Abrir</b>. <b>Windows:</b> dê dois cliques em <i>Instalar no Windows.bat</i>.</div>
+        2. <b>Mac:</b> dê dois cliques em <i>Instalar no Mac.command</i>; se o Mac bloquear, vá em <b>Ajustes do Sistema › Privacidade e Segurança › Abrir Mesmo Assim</b>. <b>Windows:</b> dê dois cliques em <i>Instalar no Windows.bat</i>.</div>
       </details>
     </div>
   </div>
@@ -378,7 +382,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <div class="faq">
       <details><summary>Meus vídeos vão para a internet?</summary><p>Você escolhe. Na transcrição “no computador”, nada sai da sua máquina. Na transcrição “na nuvem” (grátis, pela Groq), só o áudio é enviado. A edição e o vídeo ficam sempre no seu computador.</p></details>
       <details><summary>É grátis mesmo?</summary><p>Sim, e com código aberto (licença MIT). O “Turbinar com IA” usa a sua assinatura do Claude Code ou do Codex, se você tiver uma.</p></details>
-      <details><summary>Preciso de um computador potente?</summary><p>Não. Com a transcrição na nuvem (recomendada, grátis até ~8 h de áudio por dia), qualquer computador atual dá conta e nada é baixado. Se preferir transcrever no computador, ele baixa a IA uma vez (0,5 a 1,6 GB) e é mais rápido em Macs com chip Apple.</p></details>
+      <details><summary>Preciso de um computador potente?</summary><p>Não. A transcrição no computador baixa a IA uma vez (0,5 a 1,6 GB) e roda bem em qualquer computador atual, mais rápido em Macs com chip Apple. Se o seu for antigo, use a transcrição na nuvem: é grátis até ~8 h de áudio por dia e nada é baixado.</p></details>
       <details><summary>Funciona em quais idiomas?</summary><p>O foco é o português do Brasil: legendas, destaques e emojis são ajustados para PT-BR.</p></details>
       <details><summary>Como atualizo ou desinstalo?</summary><p>O CorteFácil avisa na tela inicial quando sai uma versão nova: é só clicar em <b>Atualizar agora</b>. Seus projetos e preferências são mantidos e, se algo der errado, ele volta para a versão anterior. Quem instalou a primeira versão (1.0.0) precisa rodar o comando de instalação uma última vez para ganhar o aviso. Para desinstalar, apague a pasta “CorteFacil” da sua pasta de usuário e o ícone do CorteFácil.</p></details>
       <details><summary>Deu algum problema. E agora?</summary><p>Abra uma <a href="https://github.com/danilocaffaro/cortefacil/issues">issue no GitHub</a> e anexe o arquivo <i>CorteFacil/logs/servidor.log</i>.</p></details>

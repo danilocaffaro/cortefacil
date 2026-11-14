@@ -521,6 +521,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:16px;border:0;border-radiu
     <div class="rows">
       <div class="row"><div><div class="t" id="verNow">Versão</div><div class="d" id="verMsg">—</div></div><button class="tb" id="verCheck">Procurar atualizações</button></div>
       <div class="row"><div><div class="t">Avisar quando houver versão nova</div><div class="d">Confere no GitHub 1 vez por dia. Nenhum dado seu é enviado.</div></div><label class="sw"><input type="checkbox" id="verAuto"><i></i></label></div>
+      <div class="row"><div><div class="t">Avisos do CorteFácil</div><div class="d">Busca 1 vez por dia os avisos de apoio e parcerias no site do CorteFácil. Envia só a versão do app; a contagem desses pedidos é como sabemos quantas pessoas usam.</div></div><label class="sw"><input type="checkbox" id="promoAuto"><i></i></label></div>
     </div>
     <div class="acts"><button class="pill lg" data-close>Pronto</button></div>
   </div>
@@ -579,12 +580,16 @@ syncThemeBtn();
 let sttChoice = null, modelPoll = null;
 function cloudReady(s){ s = s || SETUP; return !!(s && s.stt && s.stt.stt === 'groq' && s.stt.has_key); }
 function renderChooser(box, onChange){
-  const s = SETUP, m = s.model, choice = sttChoice || (cloudReady(s) ? 'groq' : (s.stt && s.stt.stt === 'local' && m.ready ? 'local' : 'groq'));
+  const s = SETUP, m = s.model, choice = sttChoice || (cloudReady(s) ? 'groq' : 'local');
   sttChoice = choice;
   const local = `${m.engine.includes('GPU') ? '1,6 GB' : '0,5 GB'}`;
   box.innerHTML = `
+    <button class="choice ${choice==='local'?'on':''}" data-v="local"><span class="ico" style="background:#34c759"><svg class="i" aria-hidden="true"><use href="#i-desktopcomputer"/></svg></span>
+      <span><b>No computador <span class="rec">Recomendado</span></b><small>Sem conta e sem internet: o vídeo não sai da sua máquina. Baixa ${local} uma única vez.</small></span></button>
+    ${choice==='local' ? `<div class="cbody">${m.ready ? `<div class="ok" style="display:flex;gap:6px;align-items:center"><svg class="i" aria-hidden="true"><use href="#i-checkmark_alt"/></svg> ${esc(m.engine)} pronto</div>`
+      : `<div>${m.error ? esc(m.error) : `Baixando ${esc(m.engine)} · ${(m.bytes/1e6).toFixed(0)} de ${(m.total/1e6).toFixed(0)} MB`}</div><div class="progress"><i style="width:${m.progress*100}%"></i></div>`}</div>` : ''}
     <button class="choice ${choice==='groq'?'on':''}" data-v="groq"><span class="ico" style="background:#0066cc"><svg class="i" aria-hidden="true"><use href="#i-cloud_fill"/></svg></span>
-      <span><b>Na nuvem <span class="rec">Recomendado</span></b><small>Grátis (até ~8 h de áudio por dia), mais rápido e sem download. Usa o Whisper grande na Groq: o áudio do vídeo é enviado para lá.</small></span></button>
+      <span><b>Na nuvem</b><small>Mais rápido, bom para computadores antigos. Precisa de uma conta grátis na Groq (até ~8 h de áudio por dia), e o áudio do vídeo é enviado para lá.</small></span></button>
     ${choice==='groq' ? `<div class="cbody">
       ${cloudReady(s) ? `<div class="ok" style="display:flex;gap:6px;align-items:center"><svg class="i" aria-hidden="true"><use href="#i-checkmark_alt"/></svg> Conectado · chave ${esc(s.stt.key_hint)}</div>
         <div style="margin-top:8px"><a href="#" id="chgKey">Trocar chave</a> · <a href="#" id="delKey">Remover</a></div>` : `
@@ -592,11 +597,7 @@ function renderChooser(box, onChange){
       <li>Clique em <b>Create API Key</b> e copie a chave.</li><li>Cole aqui:</li></ol>
       <div class="keyrow"><input class="field" type="password" id="keyIn" placeholder="gsk_…" autocomplete="off"><button class="pill" id="keyGo">Verificar</button></div>
       <div id="keyMsg" class="note" style="color:var(--danger)"></div>`}
-      <div class="note"><svg class="i" aria-hidden="true"><use href="#i-lock_fill"/></svg> A chave fica só neste computador. Se a nuvem falhar, o app usa a IA local.</div></div>` : ''}
-    <button class="choice ${choice==='local'?'on':''}" data-v="local"><span class="ico" style="background:#34c759"><svg class="i" aria-hidden="true"><use href="#i-desktopcomputer"/></svg></span>
-      <span><b>No computador</b><small>Sem conta e sem internet: o vídeo não sai da sua máquina. Baixa ${local} uma única vez.</small></span></button>
-    ${choice==='local' ? `<div class="cbody">${m.ready ? `<div class="ok" style="display:flex;gap:6px;align-items:center"><svg class="i" aria-hidden="true"><use href="#i-checkmark_alt"/></svg> ${esc(m.engine)} pronto</div>`
-      : `<div>${m.error ? esc(m.error) : `Baixando ${esc(m.engine)} · ${(m.bytes/1e6).toFixed(0)} de ${(m.total/1e6).toFixed(0)} MB`}</div><div class="progress"><i style="width:${m.progress*100}%"></i></div>`}</div>` : ''}`;
+      <div class="note"><svg class="i" aria-hidden="true"><use href="#i-lock_fill"/></svg> A chave fica só neste computador. Se a nuvem falhar, o app usa a IA local.</div></div>` : ''}`;
   box.querySelectorAll('.choice').forEach(b => b.onclick = async () => {
     sttChoice = b.dataset.v;
     if (sttChoice === 'local'){ await api('/api/prefs', {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({stt:'local'})}).catch(()=>{}); await api('/api/setup/prepare', {method:'POST'}); pollModel(box, onChange); }
@@ -623,7 +624,7 @@ function pollModel(box, onChange){
     if (!SETUP.model.ready && !SETUP.model.error && sttChoice === 'local') modelPoll = setTimeout(tick, 1000); };
   tick();
 }
-$('#prefsBtn').onclick = async () => { SETUP = await api('/api/setup'); if (UPD) syncVer(); else checkUpdates(false); renderSupport(); sttChoice = null; $('#prefSheet').classList.remove('hidden'); renderChooser($('#prefChooser')); if (sttChoice === 'local' && !SETUP.model.ready) pollModel($('#prefChooser')); };
+$('#prefsBtn').onclick = async () => { SETUP = await api('/api/setup'); if (UPD) syncVer(); else checkUpdates(false); renderSupport(); sttChoice = null; $('#prefSheet').classList.remove('hidden'); renderChooser($('#prefChooser')); if (sttChoice === 'local' && !SETUP.model.ready){ await api('/api/setup/prepare', {method:'POST'}).catch(()=>{}); pollModel($('#prefChooser')); } };
 
 // ------------------------------------------------------------------ onboarding
 async function runSetup(){
@@ -639,7 +640,7 @@ async function runSetup(){
     const sync = () => { const ok = SETUP.ffmpeg && (cloudReady() || (sttChoice === 'local' && SETUP.model.ready));
       $('#suGo').disabled = !ok; $('#suGo').textContent = ok ? 'Começar' : (sttChoice === 'local' ? 'Preparando…' : 'Conecte a nuvem ou escolha o computador'); };
     renderChooser($('#suChooser'), sync); sync();
-    if (sttChoice === 'local' && !m.ready) pollModel($('#suChooser'), sync);
+    if (sttChoice === 'local' && !m.ready){ await api('/api/setup/prepare', {method:'POST'}).catch(()=>{}); pollModel($('#suChooser'), sync); }
   };
   tick();
 }
@@ -682,12 +683,17 @@ document.addEventListener('click', e => {
 });
 async function renderSupport(){
   const pr = await loadPromo(), sp = pr.support;
+  $('#promoAuto').checked = pr.enabled !== false;
   $('#supBox').classList.toggle('hidden', !sp); if (!sp) return;
   $('#supTitle').textContent = sp.title; $('#supText').textContent = sp.text || 'O CorteFácil é grátis e de código aberto. Se ele te ajuda, considere apoiar.';
   $('#supLinks').innerHTML = sp.links.map(l => `<a class="pill" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)}</a>`).join('') +
     (sp.pix ? `<button class="pill ghost" id="pixCopy" data-pix="${esc(sp.pix)}">Copiar chave Pix</button>` : '');
   const pb = $('#pixCopy'); if (pb) pb.onclick = () => navigator.clipboard.writeText(pb.dataset.pix).then(() => toast('Chave Pix copiada. Obrigado! 💛'));
 }
+$('#promoAuto').onchange = async e => {
+  try { await api('/api/promo', {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({enabled: e.target.checked})}); } catch(err){}
+  PROMO = null; await renderSupport(); renderPromo('home');
+};
 $('#supLink').onclick = e => { e.preventDefault(); $('#prefsBtn').click(); setTimeout(() => $('#supBox').scrollIntoView({block:'center', behavior:'smooth'}), 300); };
 
 // ------------------------------------------------------------------ atualizações

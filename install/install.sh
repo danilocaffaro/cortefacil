@@ -70,8 +70,10 @@ ok "uv pronto"
 b "3/4  Instalando componentes (pode levar alguns minutos na primeira vez)"
 "$UV" sync --frozen --quiet || fail "Falha ao instalar os componentes. Rode de novo; se persistir, abra uma issue no GitHub."
 ok "Componentes instalados"
-# guarda o PATH do Terminal: assim o app encontra o Claude Code / Codex mesmo aberto pelo ícone
-printf "%s" "$PATH" > "$DEST/.path"
+# guarda o PATH do Terminal: assim o app encontra o Claude Code / Codex mesmo aberto pelo ícone.
+# Soma ao que já estava salvo: o instalador de clique duplo roda com um PATH mais curto.
+OLDPATH=""; [ -f "$DEST/.path" ] && OLDPATH="$(cat "$DEST/.path")"
+printf "%s" "$(printf "%s:%s" "$PATH" "$OLDPATH" | tr ':' '\n' | awk 'NF && !seen[$0]++' | paste -sd: -)" > "$DEST/.path"
 for c in claude codex; do
   if command -v "$c" >/dev/null 2>&1; then ok "Assistente de IA encontrado: $c"; fi
 done

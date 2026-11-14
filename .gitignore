@@ -10,3 +10,4 @@ cortefacil/jobs/
 .ref/
 config.json
 .update-backup/
+dist/

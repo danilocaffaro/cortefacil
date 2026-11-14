@@ -4,8 +4,10 @@ O conteúdo vem de um arquivo JSON publicado no site (promo.json), lido no máxi
 Assim dá para ligar, trocar ou desligar patrocinadores e links de apoio SEM lançar versão nova.
 
 Princípios (não quebre):
-- Nenhum dado do usuário é enviado. Não há contagem de visualizações nem de cliques.
-  Para medir resultado, o patrocinador usa cupom ou UTM no próprio link.
+- Nenhum dado do usuário é enviado. O pedido leva só o user-agent `cortefacil/<versão>`, e o
+  número de pedidos por dia é a única métrica de uso do projeto. Não há contagem de visualizações
+  nem de cliques. Para medir resultado, o patrocinador usa cupom ou UTM no próprio link.
+- Dá para desligar em Preferências › "Avisos do CorteFácil" (aí o app não faz nenhum pedido ao site).
 - Imagens só do domínio do CorteFácil (uma imagem de terceiros revelaria o IP de quem abre o app).
 - Links só https. Todo texto é validado e limitado. Patrocínio é sempre rotulado como tal.
 - Cada aviso pode ser fechado; fechado, não volta.
@@ -100,6 +102,14 @@ def sanitize(raw: dict, today: date | None = None) -> dict:
     return out
 
 
+def version() -> str:
+    try:
+        v = (HOME / "VERSION").read_text().strip()
+    except OSError:
+        return "0"
+    return v if re.fullmatch(r"[0-9][0-9A-Za-z.\-]{0,20}", v) else "0"
+
+
 def fetch(force: bool = False) -> dict:
     """Config crua (do cache se tiver menos de 1 dia). Nunca levanta erro."""
     try:
@@ -109,7 +119,7 @@ def fetch(force: bool = False) -> dict:
     if not force and cached and time.time() - cached.get("_at", 0) < EVERY:
         return cached.get("data") or {}
     try:
-        req = urllib.request.Request(URL, headers={"User-Agent": "cortefacil"})
+        req = urllib.request.Request(URL, headers={"User-Agent": f"cortefacil/{version()}"})
         with urllib.request.urlopen(req, timeout=8) as r:
             if r.length and r.length > 200_000:
                 raise ValueError("grande demais")
@@ -121,7 +131,10 @@ def fetch(force: bool = False) -> dict:
         return cached.get("data") or {}
 
 
-def visible(dismissed: list[str]) -> dict:
+def visible(dismissed: list[str], enabled: bool = True) -> dict:
+    if not enabled:
+        return {"support": None, "campaigns": [], "enabled": False}
     cfg = sanitize(fetch())
+    cfg["enabled"] = True
     cfg["campaigns"] = [c for c in cfg["campaigns"] if c["id"] not in set(dismissed or [])]
     return cfg

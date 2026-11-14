@@ -49,7 +49,7 @@ cortefacil/
   nlp.py          heurísticas PT-BR: palavras-chave, emojis, vícios
   cloud_stt.py    transcrição opcional na nuvem (Groq, Whisper turbo grátis); chave em config.json (600), com fallback local
   sfx.py          efeitos sonoros dos cortes (whoosh/pop sintetizados, sem arquivos de terceiros), mixados no render
-  promo.py        apoio/patrocínio: lê promo.json do site (1x/dia), valida e mostra nos espaços home/export/engrenagem; sem rastreamento (ver docs/MONETIZACAO.md)
+  promo.py        apoio/patrocínio: lê promo.json do site (1x/dia, user-agent `cortefacil/<versão>`, desligável em ⚙︎ › Avisos do CorteFácil), valida e mostra nos espaços home/export/engrenagem; sem rastreamento (ver docs/MONETIZACAO.md)
   updater.py      atualizações: confere a última release no GitHub (1x/dia), baixa, troca o código com backup em .update-backup/, roda uv sync --frozen e reinicia; desfaz se falhar
   validate.py     valida tudo o que a interface envia (cores, música, emoji, números) antes de chegar ao ffmpeg/HTML
   llm.py          "Turbinar com IA": chama `claude -p` ou `codex exec` (conta do usuário, sem API key)
@@ -85,5 +85,6 @@ Pontos centrais do motor:
 1. Aumente `VERSION` (ex.: 1.1.0 → 1.2.0) e descreva as mudanças em `CHANGELOG.md`.
 2. Commit + push no `main`.
 3. `gh release create v1.2.0 --title "CorteFácil 1.2.0" --notes "<texto curto em português, em tópicos>"`. As notas aparecem na janela "Atualizar agora" do app.
+4. `install/instalador/build.sh` e `gh release upload v1.2.0 dist/CorteFacil-Instalador-Mac.zip dist/CorteFacil-Instalador-Windows.exe`. **Toda release precisa desses dois arquivos:** o botão "Baixar" do site aponta para `releases/latest/download/...`.
 
 A tag precisa ter o `VERSION` igual ao número dela. O instalador também instala a última release (sem release, usa o `main`). Para testar o atualizador sem publicar, use `CORTEFACIL_UPDATE_API` e `CORTEFACIL_UPDATE_DOWNLOAD` apontando para um servidor local.

@@ -10,9 +10,19 @@ $Branch = 'main'
 $Dest   = if ($env:CORTEFACIL_HOME) { $env:CORTEFACIL_HOME } else { Join-Path $env:USERPROFILE 'CorteFacil' }
 $AppName = 'CorteFácil'
 
-function Step($t) { Write-Host "`n$t" -ForegroundColor White }
+function Step($t) {
+  Write-Host "`n$t" -ForegroundColor White
+  if ($t -match '^(\d)/4\s+(.*)$') {
+    $ProgressPreference = 'Continue'  # só aqui: deixar ligado deixa os downloads lentos
+    Write-Progress -Activity 'Instalando o CorteFácil' -Status "Etapa $($Matches[1]) de 4: $($Matches[2])" -PercentComplete (([int]$Matches[1] - 1) * 25)
+  }
+}
 function Ok($t)   { Write-Host "  ✓ $t" -ForegroundColor Green }
-function Fail($t) { Write-Host "`n✗ $t`n" -ForegroundColor Red; Read-Host 'Pressione Enter para sair'; exit 1 }
+function Fail($t) {
+  Write-Host "`n✗ $t`n" -ForegroundColor Red
+  if (-not $env:CORTEFACIL_NO_PAUSE) { Read-Host 'Pressione Enter para sair' }  # o instalador .exe já pausa
+  exit 1
+}
 
 Write-Host "`n  ▶ CorteFácil — instalador" -ForegroundColor Yellow
 Write-Host '  Editor automático de vídeos para Reels, TikTok e Shorts.'
@@ -82,6 +92,7 @@ foreach ($p in $places) {
 }
 Ok "Atalho “$AppName” criado na Área de Trabalho e no Menu Iniciar"
 
+$ProgressPreference = 'Continue'; Write-Progress -Activity 'Instalando o CorteFácil' -Completed; $ProgressPreference = 'SilentlyContinue'
 Write-Host "`nPronto! 🎉  Abrindo o CorteFácil…" -ForegroundColor White
 Start-Process -FilePath $pyw -ArgumentList ('"' + (Join-Path $Dest 'cortefacil\launcher.py') + '" --background') -WorkingDirectory $Dest
 Write-Host "`n  Da próxima vez, é só abrir o ícone “$AppName” na Área de Trabalho."

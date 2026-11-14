@@ -1,26 +1,31 @@
 const RAW = 'https://raw.githubusercontent.com/danilocaffaro/cortefacil/main/install';
+const DL = 'https://github.com/danilocaffaro/cortefacil/releases/latest/download';
 const OS = {
-  mac: { steps: [
-      ['Abra o Terminal', 'Aperte <kbd>⌘</kbd> + <kbd>Espaço</kbd>, digite <b>Terminal</b> e aperte <kbd>Enter</kbd>.'],
-      ['Cole este comando e aperte Enter', '', `curl -fsSL ${RAW}/install.sh | bash`],
-      ['Pronto', 'O CorteFácil abre sozinho. Na primeira vez, escolha transcrever na nuvem (grátis) ou no computador. Depois, é só usar o ícone na Mesa ou em Aplicativos.']],
-    req: ['macOS 12 ou mais novo', 'Qualquer Mac com a nuvem', '~2 GB livres'] },
-  win: { steps: [
-      ['Abra o PowerShell', 'Aperte a tecla <kbd>Windows</kbd>, digite <b>PowerShell</b> e aperte <kbd>Enter</kbd>.'],
-      ['Cole este comando e aperte Enter', '', `irm ${RAW}/install.ps1 | iex`],
-      ['Pronto', 'O CorteFácil abre sozinho. Na primeira vez, escolha transcrever na nuvem (grátis) ou no computador. Depois, é só usar o ícone na Área de Trabalho.']],
-    req: ['Windows 10 ou 11', 'Qualquer PC atual com a nuvem', '~2 GB livres'] },
-  linux: { steps: [
+  mac: { label: 'Mac', file: `${DL}/CorteFacil-Instalador-Mac.zip`, steps: [
+      ['Baixe o instalador', 'Abra o arquivo baixado e dê dois cliques em <b>Instalar CorteFácil</b>.', '', 'mac'],
+      ['Se o Mac avisar que não pode verificar o app', 'Clique em <b>OK</b>, abra <b>Ajustes do Sistema › Privacidade e Segurança</b>, role até o fim e clique em <b>Abrir Mesmo Assim</b>. Isso só acontece na primeira vez: o CorteFácil é gratuito e não tem a assinatura paga da Apple.'],
+      ['Pronto', 'Uma janela mostra o progresso (2 a 5 minutos) e o CorteFácil abre sozinho. Depois, é só usar o ícone na Mesa ou em Aplicativos.']],
+    term: ['Abra o Terminal (<kbd>⌘</kbd> + <kbd>Espaço</kbd>, digite <b>Terminal</b>) e cole:', `curl -fsSL ${RAW}/install.sh | bash`],
+    req: ['macOS 12 ou mais novo', 'Mac com chip Apple ou Intel', '~2 GB livres'] },
+  win: { label: 'Windows', file: `${DL}/CorteFacil-Instalador-Windows.exe`, steps: [
+      ['Baixe o instalador', 'Dê dois cliques no arquivo baixado.', '', 'win'],
+      ['Se aparecer “O Windows protegeu o computador”', 'Clique em <b>Mais informações</b> e depois em <b>Executar assim mesmo</b>. Isso só acontece na primeira vez: o CorteFácil é gratuito e não tem certificado pago.'],
+      ['Pronto', 'Uma janela mostra o progresso (2 a 5 minutos) e o CorteFácil abre sozinho. Depois, é só usar o ícone na Área de Trabalho.']],
+    term: ['Abra o PowerShell (tecla <kbd>Windows</kbd>, digite <b>PowerShell</b>) e cole:', `irm ${RAW}/install.ps1 | iex`],
+    req: ['Windows 10 ou 11 (64 bits)', 'Qualquer PC atual', '~2 GB livres'] },
+  linux: { label: 'Linux', steps: [
       ['Abra o terminal', 'Use o atalho do seu sistema, normalmente <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>.'],
       ['Cole este comando e aperte Enter', '', `curl -fsSL ${RAW}/install.sh | bash`],
       ['Pronto', 'O CorteFácil abre no navegador e aparece no menu de aplicativos.']],
-    req: ['Ubuntu, Fedora e afins', 'Qualquer PC atual com a nuvem', '~2 GB livres'] },
+    req: ['Ubuntu, Fedora e afins', 'Qualquer PC atual', '~2 GB livres'] },
 };
 function render(os){
+  const o = OS[os];
   document.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.os === os));
-  document.getElementById('steps').innerHTML = OS[os].steps.map(([t, d, cmd], i) =>
-    `<div class="step"><span class="n">${i+1}</span><div style="flex:1;min-width:0"><p><b>${t}</b></p>${d?`<small>${d}</small>`:''}${cmd?`<div class="cmd"><code id="c${i}">${cmd}</code><button data-copy="c${i}">Copiar</button></div>`:''}</div></div>`).join('');
-  document.getElementById('req').innerHTML = OS[os].req.map(r => `<span>${r}</span>`).join('');
+  document.getElementById('steps').innerHTML = o.steps.map(([t, d, cmd, dl], i) =>
+    `<div class="step"><span class="n">${i+1}</span><div style="flex:1;min-width:0"><p><b>${t}</b></p>${d?`<small>${d}</small>`:''}${cmd?`<div class="cmd"><code id="c${i}">${cmd}</code><button data-copy="c${i}">Copiar</button></div>`:''}${dl?`<a class="btn primary dlbtn" href="${o.file}">Baixar para ${o.label}</a>`:''}</div></div>`).join('') +
+    (o.term ? `<details class="term"><summary>Prefere o Terminal? ›</summary><small>${o.term[0]}</small><div class="cmd"><code id="ct">${o.term[1]}</code><button data-copy="ct">Copiar</button></div></details>` : '');
+  document.getElementById('req').innerHTML = o.req.map(r => `<span>${r}</span>`).join('');
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-copy]'); if (!b) return;
@@ -28,7 +33,14 @@ document.addEventListener('click', e => {
   navigator.clipboard.writeText(txt).then(() => { b.textContent = 'Copiado ✓'; setTimeout(() => b.textContent = 'Copiar', 1800); });
 });
 document.querySelectorAll('.seg button').forEach(b => b.onclick = () => render(b.dataset.os));
-const ua = navigator.userAgent; render(/Windows/i.test(ua) ? 'win' : /Linux/i.test(ua) && !/Android/i.test(ua) ? 'linux' : 'mac');
+const ua = navigator.userAgent, mobile = /Android|iPhone|iPad|iPod/i.test(ua);
+const myOS = /Windows/i.test(ua) ? 'win' : /Linux/i.test(ua) && !/Android/i.test(ua) ? 'linux' : 'mac';
+render(myOS);
+// botão do topo: no computador, já baixa o instalador do sistema certo e leva aos passos de liberar
+if (!mobile && OS[myOS].file) document.querySelectorAll('a[data-dl]').forEach(a => {
+  a.href = OS[myOS].file; a.textContent = `Baixar para ${OS[myOS].label}`;
+  a.addEventListener('click', () => setTimeout(() => { location.hash = 'instalar'; }, 300));
+});
 const tb = document.getElementById('theme');
 const sync = () => tb.innerHTML = document.documentElement.dataset.theme === 'dark' ? '<svg class="i" aria-hidden="true"><use href="#i-sun_max_fill"/></svg>' : '<svg class="i" aria-hidden="true"><use href="#i-moon_fill"/></svg>';
 tb.onclick = () => { const d = document.documentElement; d.dataset.theme === 'dark' ? delete d.dataset.theme : d.dataset.theme = 'dark';

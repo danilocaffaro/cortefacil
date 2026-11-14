@@ -224,7 +224,16 @@ def update_apply():
 
 @app.get("/api/promo")
 def promo_get():
-    return promo.visible(cloud_stt.load().get("promo_dismissed") or [])
+    cfg = cloud_stt.load()
+    return promo.visible(cfg.get("promo_dismissed") or [], cfg.get("promo_check", True))
+
+
+@app.put("/api/promo")
+def promo_prefs(body: dict = Body(...)):
+    cfg = cloud_stt.load()
+    cfg["promo_check"] = bool(body.get("enabled", True))
+    cloud_stt.save(cfg)
+    return {"enabled": cfg["promo_check"]}
 
 
 @app.post("/api/promo/dismiss")

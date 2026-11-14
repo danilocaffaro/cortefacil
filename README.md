@@ -28,6 +28,17 @@ Para corrigir qualquer coisa, edite o texto: **cortar uma frase do texto corta o
 
 ## Instalar (2 minutos)
 
+**Jeito mais fácil:** baixe o instalador e dê dois cliques.
+
+| Mac | Windows 10 e 11 |
+|---|---|
+| [**Baixar para Mac**](https://github.com/danilocaffaro/cortefacil/releases/latest/download/CorteFacil-Instalador-Mac.zip) | [**Baixar para Windows**](https://github.com/danilocaffaro/cortefacil/releases/latest/download/CorteFacil-Instalador-Windows.exe) |
+| Se o Mac avisar que não pode verificar o app: **Ajustes do Sistema › Privacidade e Segurança › Abrir Mesmo Assim**. | Se aparecer “O Windows protegeu o computador”: **Mais informações › Executar assim mesmo**. |
+
+O aviso só aparece na primeira vez: o CorteFácil é gratuito e não tem a assinatura paga da Apple nem o certificado da Microsoft. O instalador só baixa e roda o mesmo script dos comandos abaixo.
+
+Prefere o terminal? Use os comandos:
+
 ### 🍎 Mac
 
 1. Abra o **Terminal**: aperte `⌘ + Espaço`, digite `Terminal` e aperte Enter.
@@ -55,8 +66,8 @@ irm https://raw.githubusercontent.com/danilocaffaro/cortefacil/main/install/inst
 Use o mesmo comando do Mac no terminal.
 
 > **Na primeira vez que abrir**, você escolhe como transcrever a fala:
-> - **Na nuvem (recomendado):** grátis pela [Groq](https://console.groq.com/keys), até ~8 h de áudio por dia, mais rápido e sem download. Crie a conta, copie a chave e cole no app (leva 1 minuto). O áudio do vídeo é enviado à Groq.
-> - **No computador:** sem conta e sem internet; o vídeo não sai da sua máquina. Baixa a IA uma única vez (1,6 GB no Mac com chip Apple, 0,5 GB nos outros).
+> - **No computador (recomendado):** sem conta e sem internet; o vídeo não sai da sua máquina. Baixa a IA uma única vez (1,6 GB no Mac com chip Apple, 0,5 GB nos outros).
+> - **Na nuvem:** grátis pela [Groq](https://console.groq.com/keys), até ~8 h de áudio por dia, mais rápida em computadores antigos e sem download. Crie a conta, copie a chave e cole no app (leva 1 minuto). O áudio do vídeo é enviado à Groq.
 >
 > Dá para trocar depois na engrenagem ⚙︎. Se a nuvem falhar, o app usa a IA do computador automaticamente.
 
@@ -64,7 +75,7 @@ Use o mesmo comando do Mac no terminal.
 <summary><b>Prefere baixar o ZIP?</b></summary>
 
 1. Nesta página, clique em **Code › Download ZIP** e descompacte o arquivo.
-2. Mac: clique com o **botão direito** em `Instalar no Mac.command` e escolha **Abrir**.
+2. Mac: dê dois cliques em `Instalar no Mac.command`; se o Mac bloquear, vá em **Ajustes do Sistema › Privacidade e Segurança › Abrir Mesmo Assim**.
    Windows: dê dois cliques em `Instalar no Windows.bat`.
 </details>
 
@@ -106,6 +117,13 @@ Você não precisa de chave de API: ele usa a conta que você já tem. Sem assis
 
 **Meus vídeos vão para a internet?**
 Depende da sua escolha. Com a transcrição **no computador**, nada sai da sua máquina. Com a transcrição **na nuvem**, só o **áudio** vai para a Groq (o vídeo e a edição ficam no computador). O *Turbinar com IA* envia apenas o **texto** da transcrição para o Claude Code ou o Codex que você usa.
+
+**O app acessa a internet sozinho?**
+Só para duas consultas, no máximo 1 vez por dia cada, e nenhuma leva dados seus:
+- **Atualizações:** pergunta ao GitHub qual é a versão mais recente.
+- **Avisos do CorteFácil:** baixa o arquivo `promo.json` do site, com os avisos de apoio e parcerias. O pedido leva só a versão do app (`cortefacil/1.2.1`). Contar esses pedidos por dia é a única forma que temos de saber quantas pessoas usam o CorteFácil.
+
+As duas podem ser desligadas na engrenagem ⚙︎.
 
 **Onde ficam meus projetos?**
 Na pasta `CorteFacil/projetos`, dentro da sua pasta de usuário.

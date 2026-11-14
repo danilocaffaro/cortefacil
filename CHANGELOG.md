@@ -1,5 +1,10 @@
 # Novidades
 
+## 1.2.1
+- **Instalador de clique duplo** para Mac e Windows: baixe no site, abra e acompanhe o progresso numa janela. Não precisa mais abrir o Terminal.
+- **Transcrição no computador como padrão:** sem conta e o vídeo não sai da sua máquina. A nuvem (Groq) continua como opção.
+- **Avisos do CorteFácil** agora podem ser desligados na engrenagem ⚙︎. O app só informa a versão ao buscar os avisos; contar esses pedidos é como sabemos quantas pessoas usam.
+
 ## 1.2.0
 - **Apoie o CorteFácil:** nova seção na engrenagem ⚙︎ com formas de apoiar o projeto, que continua grátis e de código aberto.
 - Espaço para indicações e parceiros, sempre identificados e que podem ser fechados no ×. Nenhum dado seu é enviado e nada é rastreado.
